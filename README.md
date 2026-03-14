@@ -4,6 +4,12 @@ This project investigates the drivers of employee attrition using HR analytics a
 
 Using an employee dataset containing demographic and workplace variables, the analysis identifies key factors associated with employee turnover and builds a predictive model estimating attrition probability.
 
+## Kaggle Notebook
+
+Interactive version of the analysis available on Kaggle:
+
+[View the Kaggle Notebook](KAGGLE_LINK_HERE)
+
 ## Methods Used
 
 - Exploratory Data Analysis
