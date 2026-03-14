@@ -6,9 +6,7 @@ Using an employee dataset containing demographic and workplace variables, the an
 
 ## Kaggle Notebook
 
-Interactive version of the analysis available on Kaggle:
-
-[View the Kaggle Notebook](KAGGLE_LINK_HERE)
+Check out the file "hr-attrition-analysis.ipynb" for the full notebook
 
 ## Methods Used
 
