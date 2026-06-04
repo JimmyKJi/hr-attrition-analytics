@@ -33,15 +33,35 @@ explicit and binding.
 
 ## Metrics
 
-- **Predictive performance.** _(pending Phase 2)_ — ROC-AUC, PR-AUC, calibration.
-- **Causal estimates.** _(pending Phase 3)_ — CATE per candidate policy;
-  risk-vs-uplift divergence statistic.
+- **Predictive performance.** (Phase 2) Logistic regression leads — test
+  ROC-AUC 0.81, PR-AUC 0.59, Brier 0.10; reasonably calibrated. GBM ROC-AUC
+  0.76. The score is a usable *risk* ranking, not an action plan.
+- **Causal estimates.** (Phase 3) OverTime → attrition: backdoor ATE +0.187,
+  EconML causal forest +0.185 (T-learner agrees, ρ=0.77); all three DoWhy
+  refuters pass. Risk-vs-uplift **divergence**: Spearman ρ=0.53, top-decile
+  overlap 27%; risk-targeting captures only 74% of achievable retention.
+- **Policy (Phase 4).** At a fixed budget, uplift-targeting beats risk-targeting
+  (post-policy 13.2% vs 14.4% at a 10% budget). Full overtime relief is a causal
+  16.0%→11.1% — short of v1's naive 7.8% claim.
 
 ## Fairness findings
 
-_(pending Phase 5)_ — demographic-parity and equalized-odds differences across
-gender, age band, and marital status, computed on **who gets intervened on**,
-not only on classifier error. Disparate-impact flag and interpretation.
+(Phase 5) Audited on **who gets flagged for intervention** (top-20%), across
+Gender, MaritalStatus, and an Age band — under both targeting rules.
+
+- **Risk-targeting amplifies demographic disparity.** It fails the four-fifths
+  rule badly on MaritalStatus (selection-rate ratio **0.21**, flagged-rate gap
+  32 pp — Single employees flagged ~5× more than Divorced) and on Age (ratio
+  **0.27**; under-30s over-flagged, 45+ under-flagged relative to their actual
+  attrition). Gender is near-parity (ratio 0.89).
+- **Uplift-targeting partly corrects it, but isn't free.** Because it targets
+  influenceability rather than raw risk, it roughly halves the MaritalStatus and
+  Age disparities (ratios 0.59 and 0.48; Age equalized-odds gap 0.59→0.13) — but
+  it *introduces* a mild gender disparity (ratio 0.89→0.71).
+- **Neither rule clears the four-fifths rule on most attributes.** The honest
+  reading: choosing a targeting rule is itself a distributive-justice decision
+  with non-obvious, attribute-specific consequences — not a neutral model output.
+  See `figures/fairness_selection_rates.png` and `FRAMING.md` §5.
 
 ## Ethical considerations
 

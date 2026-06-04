@@ -12,7 +12,7 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started
 | 2 | Predictive baselines | logit + GBM, stratified CV, ROC-AUC/PR-AUC, **calibration**, SHAP summary | ✅ |
 | 3 | Causal layer (novel core) | DoWhy identification + refutation; EconML CATE per policy; **risk-vs-uplift divergence** figure + stat | ✅ |
 | 4 | Causal policy simulation | uplift-targeted vs risk-targeted reduction table + interpretation | ✅ |
-| 5 | Ethics & fairness audit | fairlearn parity/eq-odds, disparate-impact, model card, normative section | ⬜ |
+| 5 | Ethics & fairness audit | fairlearn parity/eq-odds, disparate-impact, model card, normative section | ✅ |
 | 5b | Transportability check | distribution-shifted test set; perf + policy degradation figure + caveat | ⬜ |
 | 6 | Writeup + reproduce | paper/writeup.md, `make all`, thin notebooks | ⬜ |
 
@@ -47,8 +47,14 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started
   (relieve overtime for all 25% who have it) is a causal **16.0%→11.1%**
   (−4.9 pp) — it does **not** reach v1's naive **7.8%**: the predictive sim
   overstated the effect (`figures/policy_simulation.png`).
-- **Fairness (Phase 5):** _pending_ — demographic-parity / equalized-odds
-  differences across gender, age band, marital status.
+- **Fairness (Phase 5):** audited on *who gets flagged* (top-20%) across gender,
+  marital status, age band. **Risk-targeting amplifies disparity** — fails the
+  four-fifths rule on marital status (sel-rate ratio **0.21**, gap 32 pp) and age
+  (**0.27**); gender near-parity (0.89). **Uplift-targeting roughly halves** the
+  marital/age disparities (ratios 0.59, 0.48; age eq-odds gap 0.59→0.13) but
+  *introduces* a mild gender gap (0.89→0.71). Neither clears four-fifths on most
+  attributes — the targeting rule is itself a distributive choice
+  (`figures/fairness_selection_rates.png`, `fairness_metrics.csv`).
 - **Transportability (Phase 5b):** _pending_ — metric + policy degradation under
   shift.
 

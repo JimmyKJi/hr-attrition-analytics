@@ -64,7 +64,11 @@ $\hat\tau(x)$ — and quantifies how far apart the rankings are:
 - **Wasted-effort fraction**: share of risk-targeted interventions landing on
   near-zero-uplift employees.
 
-Headline (to be filled with the computed numbers in `PROGRESS.md`):
+The computed result (test set; full numbers in `PROGRESS.md`): Spearman
+$\rho(r,\hat\tau)=0.53$, top-decile overlap just **27%**, and a risk-targeted
+overtime policy captures only **74%** of the retention an uplift-targeted one
+would — while **38%** of the top-risk decile isn't even on overtime, so the
+lever can't touch them. Headline:
 *targeting the highest-risk employees is not the same as targeting the ones an
 intervention can actually retain — acting on the predictive score wastes effort
 and can harm the wrong people.*
@@ -92,11 +96,22 @@ ethical judgement is operationalised into a governance metric an organisation
 then optimises?* An attrition score is exactly such a number. Acting on it
 raises hazards the predictive accuracy says nothing about:
 
-1. **Disparate impact.** If $r(x)$ tracks protected-ish attributes (gender,
-   age, marital status), then "intervene on the high-risk" silently allocates
-   scrutiny and resources unevenly. Phase 5 audits this with `fairlearn`
-   (demographic-parity and equalized-odds differences) on **who gets
-   intervened on**, not just on classifier error.
+1. **Disparate impact — and the targeting rule as a distributive choice.** If
+   $r(x)$ tracks protected-ish attributes, then "intervene on the high-risk"
+   silently allocates scrutiny and resources unevenly. Phase 5 audits this with
+   `fairlearn` (demographic-parity and equalized-odds differences) on **who gets
+   flagged for intervention**, not just on classifier error — and finds the
+   result depends on *which* rule you act on. Risk-targeting **amplifies**
+   demographic disparity: it fails the four-fifths rule badly on marital status
+   (selection-rate ratio 0.21 — Single employees flagged ~5× more than Divorced)
+   and on age (ratio 0.27, over-flagging under-30s). Uplift-targeting, by
+   chasing influenceability rather than raw risk, roughly **halves** those two
+   disparities — but it is not free: it *introduces* a mild gender disparity
+   (ratio 0.89→0.71), and neither rule clears the four-fifths rule on most
+   attributes. The lesson is the thesis in miniature: once ethics is compressed
+   into a score and the score is acted on, **the choice of decision rule is
+   itself a distributive-justice judgement** with non-obvious, attribute-specific
+   consequences — not a neutral technical default. (`figures/fairness_selection_rates.png`.)
 2. **Surveillance and the self-fulfilling prophecy.** Labelling someone a
    "flight risk" changes how managers treat them; the label can *produce* the
    exit it predicted. A score acted upon is not a passive measurement.
