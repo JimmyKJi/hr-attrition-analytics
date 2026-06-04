@@ -1,0 +1,37 @@
+# Raw data is kept OUT of git on purpose — sources are recorded in
+# DATA_LINEAGE.md instead. See README "Honest guardrails".
+data/raw/
+data/interim/
+data/processed/
+*.csv
+!tests/fixtures/*.csv
+
+# Secrets — never commit
+.env
+.env.*
+*.key
+kaggle.json
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual envs
+.venv/
+venv/
+env/
+
+# Trained models are regenerable; figures ARE committed
+models/
+*.pkl
+*.joblib
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
