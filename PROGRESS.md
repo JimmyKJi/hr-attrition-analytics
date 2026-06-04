@@ -7,8 +7,8 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started
 
 | Phase | What | DoD | Status |
 | --- | --- | --- | --- |
-| 0 | Repo scaffold & framing | structure, README w/ synthetic caveat, FRAMING.md, requirements, Makefile, lineage, model-card skeleton | 🔄 |
-| 1 | Data loader + schema test | loader, fixed-seed stratified split, no leakage, schema test (1470 rows) passes | ⬜ |
+| 0 | Repo scaffold & framing | structure, README w/ synthetic caveat, FRAMING.md, requirements, Makefile, lineage, model-card skeleton | ✅ |
+| 1 | Data loader + schema test | loader, fixed-seed stratified split, no leakage, schema test (1470 rows) passes | ✅ |
 | 2 | Predictive baselines | logit + GBM, stratified CV, ROC-AUC/PR-AUC, **calibration**, SHAP summary | ⬜ |
 | 3 | Causal layer (novel core) | DoWhy identification + refutation; EconML CATE per policy; **risk-vs-uplift divergence** figure + stat | ⬜ |
 | 4 | Causal policy simulation | uplift-targeted vs risk-targeted reduction table + interpretation | ⬜ |
@@ -18,6 +18,9 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started
 
 ## Results (filled as phases complete — do not fabricate)
 
+- **Data (Phase 1):** clean frame 1470×31 (23 numeric, 7 categorical, target);
+  stratified split 1102/368 with attrition ≈16.1% preserved in both; 9 schema
+  tests pass. Source: confirmed public mirror of the Kaggle file.
 - **Predictive baseline (Phase 2):** _pending_ — ROC-AUC, PR-AUC, calibration.
 - **Divergence (Phase 3):** _pending_ — Spearman ρ(risk, uplift), top-decile
   overlap, wasted-effort %.
