@@ -11,7 +11,7 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started
 | 1 | Data loader + schema test | loader, fixed-seed stratified split, no leakage, schema test (1470 rows) passes | ✅ |
 | 2 | Predictive baselines | logit + GBM, stratified CV, ROC-AUC/PR-AUC, **calibration**, SHAP summary | ✅ |
 | 3 | Causal layer (novel core) | DoWhy identification + refutation; EconML CATE per policy; **risk-vs-uplift divergence** figure + stat | ✅ |
-| 4 | Causal policy simulation | uplift-targeted vs risk-targeted reduction table + interpretation | ⬜ |
+| 4 | Causal policy simulation | uplift-targeted vs risk-targeted reduction table + interpretation | ✅ |
 | 5 | Ethics & fairness audit | fairlearn parity/eq-odds, disparate-impact, model card, normative section | ⬜ |
 | 5b | Transportability check | distribution-shifted test set; perf + policy degradation figure + caveat | ⬜ |
 | 6 | Writeup + reproduce | paper/writeup.md, `make all`, thin notebooks | ⬜ |
@@ -39,8 +39,14 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started
   would; and **38%** of the top-risk decile isn't even on overtime, so the
   lever can't touch them (`figures/divergence.png`). This is the headline:
   targeting the most *at-risk* is not targeting the most *influenceable*.
-- **Policy (Phase 4):** _pending_ — naive risk-targeted vs causal
-  uplift-targeted attrition reduction (and whether v1's 16.1%→7.8% survives).
+- **Policy (Phase 4):** at a fixed retention budget (relieve overtime for the
+  top-k), uplift-targeting beats risk-targeting at every budget — post-policy
+  attrition of **13.2% vs 14.4%** at a 10% budget, **11.6% vs 13.1%** at 20%
+  (risk-targeting captures only **54–66%** of the achievable reduction; the rest
+  is wasted on high-risk employees the lever can't move). Full intervention
+  (relieve overtime for all 25% who have it) is a causal **16.0%→11.1%**
+  (−4.9 pp) — it does **not** reach v1's naive **7.8%**: the predictive sim
+  overstated the effect (`figures/policy_simulation.png`).
 - **Fairness (Phase 5):** _pending_ — demographic-parity / equalized-odds
   differences across gender, age band, marital status.
 - **Transportability (Phase 5b):** _pending_ — metric + policy degradation under
