@@ -1,10 +1,10 @@
 # Raw data is kept OUT of git on purpose — sources are recorded in
-# DATA_LINEAGE.md instead. See README "Honest guardrails".
+# DATA_LINEAGE.md instead. See README "Honest guardrails". The directory
+# rules below cover the dataset; generated metric tables (figures/*.csv) are
+# committed deliberately.
 data/raw/
 data/interim/
 data/processed/
-*.csv
-!tests/fixtures/*.csv
 
 # Secrets — never commit
 .env
