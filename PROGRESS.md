@@ -13,7 +13,7 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started
 | 3 | Causal layer (novel core) | DoWhy identification + refutation; EconML CATE per policy; **risk-vs-uplift divergence** figure + stat | ✅ |
 | 4 | Causal policy simulation | uplift-targeted vs risk-targeted reduction table + interpretation | ✅ |
 | 5 | Ethics & fairness audit | fairlearn parity/eq-odds, disparate-impact, model card, normative section | ✅ |
-| 5b | Transportability check | distribution-shifted test set; perf + policy degradation figure + caveat | ⬜ |
+| 5b | Transportability check | distribution-shifted test set; perf + policy degradation figure + caveat | ✅ |
 | 6 | Writeup + reproduce | paper/writeup.md, `make all`, thin notebooks | ⬜ |
 
 ## Results (filled as phases complete — do not fabricate)
@@ -55,8 +55,20 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started
   *introduces* a mild gender gap (0.89→0.71). Neither clears four-fifths on most
   attributes — the targeting rule is itself a distributive choice
   (`figures/fairness_selection_rates.png`, `fairness_metrics.csv`).
-- **Transportability (Phase 5b):** _pending_ — metric + policy degradation under
-  shift.
+- **Transportability (Phase 5b):** markets defined by **overtime prevalence**
+  (25% original / 55% long-hours / 8% normalized-hours), reweighting on the single
+  binary so the effective sample stays large (ESS **100% / 68% / 86%** — a real
+  sample, not a few upweighted outliers). **The risk *ranking* ports:** ROC-AUC
+  **0.81 / 0.84 / 0.76**, all well above chance; Brier (0.098 / 0.125 / 0.083)
+  moves with the base rate, not a calibration collapse — mean predicted tracks
+  each market's prevalence (14.4% vs 16.0%, 20.0% vs 24.2%, 11.2% vs 11.3%).
+  **The *policy* does not:** the overtime lever averts **5.8 pp** of attrition in
+  the long-hours market but only **1.6 pp** in the normalized-hours one (4.4 pp
+  original), because where few are on overtime there is little for it to relieve.
+  A model that predicts acceptably abroad can still imply a retention policy that
+  does almost nothing there — *a model validated in one labour market is not
+  thereby validated for another* (`figures/transportability.png`,
+  `transportability.csv`).
 
 ## Environment notes
 
