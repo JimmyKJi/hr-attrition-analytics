@@ -14,7 +14,7 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started
 | 4 | Causal policy simulation | uplift-targeted vs risk-targeted reduction table + interpretation | ✅ |
 | 5 | Ethics & fairness audit | fairlearn parity/eq-odds, disparate-impact, model card, normative section | ✅ |
 | 5b | Transportability check | distribution-shifted test set; perf + policy degradation figure + caveat | ✅ |
-| 6 | Writeup + reproduce | paper/writeup.md, `make all`, thin notebooks | ⬜ |
+| 6 | Writeup + reproduce | paper/writeup.md, `make all`, thin notebooks | ✅ |
 
 ## Results (filled as phases complete — do not fabricate)
 
@@ -69,6 +69,14 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started
   does almost nothing there — *a model validated in one labour market is not
   thereby validated for another* (`figures/transportability.png`,
   `transportability.csv`).
+- **Writeup + reproduce (Phase 6):** `paper/writeup.md` carries the full arc
+  (prediction → why it misleads → causal uplift → divergence → policy →
+  ethics/fairness → transportability → conclusion → flagged v2). **`make all`
+  reproduces the whole pipeline end-to-end (verified, exit 0)**; the only run-to-
+  run movement is last-ULP float noise in the forest and Monte-Carlo jitter in
+  the DoWhy refuters — every reported figure is stable to the digits cited. Four
+  thin, executed notebooks (`notebooks/01_eda … 04_ethics`) wrap `src/` and embed
+  outputs for visual review. All six phases ✅.
 
 ## Environment notes
 
