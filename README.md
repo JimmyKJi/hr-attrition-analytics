@@ -38,6 +38,24 @@ computed numbers are in **[`PROGRESS.md`](PROGRESS.md)**.
         fairness audit + model card = ethics, in code
 ```
 
+## Results at a glance
+
+| Question | Phase | Result |
+| --- | --- | --- |
+| Who is likely to leave? | 2 | Logistic regression: test **ROC-AUC 0.81**, PR-AUC 0.59, calibrated. |
+| Does overtime *cause* attrition? | 3 | Backdoor ATE **+0.187**; causal forest +0.185; all three refuters pass. |
+| How robust to hidden confounders? | 3+ | **RV 0.24**, **E-value 5.13** — a confounder ~12× the strongest *measured* one would be needed to overturn it. |
+| Is risk the same as influenceability? | 3 | **No.** Spearman ρ **0.53**, top-decile overlap **27%**; risk-targeting captures only **74%** of achievable retention. |
+| Just an overtime artefact? | 3+ | **No.** A second lever (frequent travel) diverges too (ρ 0.55, overlap 22%); the levers reach different people. |
+| Does targeting the influenceable win? | 4 | **Yes.** At a 20% budget, post-policy **11.6% (uplift) vs 13.1% (risk)**; full relief is a causal **16.0%→11.1%** (not v1's 7.8%). |
+| Who gets flagged for intervention? | 5 | Risk-targeting fails the four-fifths rule on marital status (**0.21**) and age (**0.27**). |
+| Efficacy *and* fairness? | 5+ | Risk→uplift is a **Pareto improvement** on the worst group, but **no rule clears four-fifths**; the rule is a distributive dial. |
+| Validated where? | 5b | The risk **ranking** ports (ROC-AUC 0.76–0.84); the **policy** does not. |
+
+Full numbers in [`PROGRESS.md`](PROGRESS.md); the narrative in
+[`paper/writeup.md`](paper/writeup.md) (or the self-contained
+[`paper/writeup.html`](paper/writeup.html), figures embedded + maths rendered).
+
 ## Why this is not another attrition classifier
 
 A logistic regression that predicts who quits is a solved exercise. The value
@@ -47,13 +65,17 @@ here is in going two steps further, in the direction of the research question
 1. **Prediction ≠ causation, made rigorous.** A causal/uplift layer
    (`econml` CausalForestDML + meta-learners, identified with `dowhy`) estimates
    *treatment effects*, and a divergence analysis shows the highest-risk
-   employees are often not the most *influenceable*.
+   employees are often not the most *influenceable*. The effect survives a
+   formal unmeasured-confounding sensitivity analysis (robustness value,
+   E-value) and the divergence reproduces on a second, independent lever — so it
+   is neither a confounding artefact nor a one-treatment fluke.
 2. **Causally-grounded policy simulation.** The counterfactual is rebuilt on
    the causal estimates, so the headline reduction is defensible rather than a
    naive re-scoring of the predictive model.
 3. **Ethics / fairness / governance, in code.** A `fairlearn` audit of *who
-   gets intervened on*, a model card, and the normative argument against acting
-   on flight-risk scores.
+   gets intervened on*, an efficacy–fairness frontier that makes the targeting
+   rule's distributive trade-off explicit, a model card, and the normative
+   argument against acting on flight-risk scores.
 4. **Transportability.** A distribution-shift stress test: a model validated in
    one labour market is not validated for another.
 
@@ -66,21 +88,22 @@ hr-attrition-analytics/
 ├── PROGRESS.md                # phase tracker + computed results
 ├── DATA_LINEAGE.md            # data sources (raw data is gitignored)
 ├── model_card.md              # intended use, limits, fairness findings
-├── requirements.txt / .lock   # pinned environment
+├── requirements.txt / .lock   # pinned env (.lock = exact, via `make lock`)
 ├── Makefile                   # `make help` for all targets
+├── scripts/                   # notebook + writeup-HTML builders (not in `make all`)
 ├── src/
 │   ├── config.py              # paths + the one random seed
 │   ├── data/                  # download + load + split (no leakage)
 │   ├── predict/               # logit + GBM, CV, calibration   (Phase 2)
 │   ├── interpret/             # SHAP attribution               (Phase 2)
-│   ├── causal/                # identify · uplift · divergence  (Phase 3)
+│   ├── causal/                # identify · uplift · divergence · levers · sensitivity (Phase 3/3+)
 │   ├── policy/                # causally-grounded simulation    (Phase 4)
-│   ├── ethics/                # fairness audit · transportability (Phase 5/5b)
+│   ├── ethics/                # fairness audit · frontier · transportability (Phase 5/5b)
 │   └── viz/                   # shared figure helpers
 ├── tests/                     # schema + pipeline tests
 ├── notebooks/                 # thin notebooks (01_eda … 04_ethics)
 ├── figures/                   # generated figures (committed)
-├── paper/                     # writeup
+├── paper/                     # writeup.md + self-contained writeup.html
 └── hr-attrition-analysis.ipynb  # v1 (the predictive baseline, preserved)
 ```
 
@@ -90,14 +113,18 @@ hr-attrition-analytics/
 git clone https://github.com/JimmyKJi/hr-attrition-analytics.git
 cd hr-attrition-analytics
 python -m venv .venv && source .venv/bin/activate
-make setup                 # install dependencies
+make setup                 # install dependencies (pinned in requirements.txt)
 make data                  # fetch the IBM HR dataset into data/raw/ (gitignored)
 make all                   # predict → causal → policy → ethics → transport
 make test                  # schema + pipeline tests
+make notebooks             # regenerate + execute the four review notebooks
+make paper-html            # render paper/writeup.html (figures embedded, MathJax)
 ```
 
 `make help` lists every target. The single random seed lives in
-[`src/config.py`](src/config.py).
+[`src/config.py`](src/config.py). For a byte-for-byte environment,
+`pip install -r requirements.lock` (exact versions, written by `make lock`)
+instead of `make setup`.
 
 ---
 

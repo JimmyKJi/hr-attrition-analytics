@@ -1,4 +1,4 @@
-.PHONY: help setup lock data predict causal policy ethics transport paper test all clean
+.PHONY: help setup lock data predict causal policy ethics transport paper paper-html notebooks test all clean
 
 PY ?= python
 
@@ -9,7 +9,7 @@ setup:  ## Install dependencies from requirements.txt
 	$(PY) -m pip install -r requirements.txt
 
 lock:  ## Freeze exact installed versions to requirements.lock
-	$(PY) -m pip freeze > requirements.lock
+	$(PY) -m pip list --format=freeze > requirements.lock  # clean name==version (no conda file:// paths)
 
 data:  ## Fetch the IBM HR dataset into data/raw/ (see DATA_LINEAGE.md)
 	$(PY) -m src.data.download
@@ -37,6 +37,14 @@ transport:  ## Phase 5b — transportability / distribution-shift stress test
 
 paper:  ## Pointer to the writeup
 	@echo "Writeup: paper/writeup.md"
+
+paper-html:  ## Render the writeup to a self-contained paper/writeup.html (figures embedded, MathJax)
+	$(PY) scripts/build_paper_html.py
+
+notebooks:  ## Regenerate the four review notebooks and execute them in place
+	$(PY) scripts/make_notebooks.py
+	PYDEVD_DISABLE_FILE_VALIDATION=1 $(PY) -m nbconvert --to notebook --execute --inplace \
+		--ExecutePreprocessor.timeout=300 notebooks/0*.ipynb
 
 test:  ## Run the test suite
 	$(PY) -m pytest -q
