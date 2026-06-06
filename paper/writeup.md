@@ -40,6 +40,7 @@ distributive-justice judgement**, not a neutral technical default.
 | --- | --- | --- |
 | Who is likely to leave? | 2 | Logistic regression: test **ROC-AUC 0.814**, PR-AUC 0.588, Brier 0.098 (CV ROC-AUC 0.847); calibrated. |
 | Does overtime cause attrition? | 3 | Backdoor ATE **+0.187**; causal forest +0.185, T-learner +0.191. All three refuters pass. |
+| How robust to hidden confounders? | 3+ | Robustness value **RV 0.24**, **E-value 5.13** — a confounder ~12× the strongest measured one would be needed to overturn it. |
 | Is risk the same as influenceability? | 3 | **No.** Spearman $\rho=0.53$, top-decile overlap **27%**, risk-targeting captures **74%** of achievable retention; **38%** of the top-risk decile isn't even on overtime. |
 | Does targeting the influenceable beat targeting the risky? | 4 | **Yes.** At a 20% budget, post-policy attrition **11.6% (uplift) vs 13.1% (risk)**. Full relief is a causal **16.0%→11.1%** (not 7.8%). |
 | Who gets flagged for intervention? | 5 | Risk-targeting fails the four-fifths rule on marital status (ratio **0.21**) and age (**0.27**). Uplift-targeting halves both but introduces a mild gender gap (0.89→0.71). |
@@ -129,6 +130,21 @@ raises attrition probability by ~19 points. EconML agrees (causal forest +0.185,
 T-learner +0.191; CATE rank-agreement $\rho=0.77$ between estimators). All three
 refuters pass — the placebo new-effect is ≈ 0 (−0.003), and both the
 random-common-cause (0.187) and 80%-subset (0.192) re-estimates are stable.
+
+**How robust is that to *unmeasured* confounding?** The refuters probe the
+no-unobserved-confounding assumption only qualitatively, so a formal sensitivity
+analysis quantifies it (Cinelli–Hazlett robustness value + VanderWeele E-value;
+linear backdoor fit, effect +0.193, $t=8.9$). The **robustness value is
+RV = 0.24** — an unobserved confounder would have to explain ~24% of the residual
+variance in *both* overtime and attrition to drive the effect to zero, roughly
+**12× the strongest covariate we did measure** (EnvironmentSatisfaction, 0.019).
+Equivalently the **E-value is 5.13**: confounding would need a risk-ratio
+association ≥ 5.1 with both treatment and outcome, beyond the measured
+covariates, to explain it away. Moderately robust — not bulletproof, but the
+assumption's fragility is *quantified*, not asserted (synthetic data, so this is
+a statement about method honesty, not a defended effect).
+
+![Sensitivity to unobserved confounding](../figures/sensitivity.png)
 
 Crucially, the effect is **heterogeneous**: $\hat\tau(x)$ ranges from +0.03 to
 +0.40 (sd 0.088). The *same* intervention helps some employees ~12× more than

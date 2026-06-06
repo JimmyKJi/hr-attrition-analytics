@@ -18,10 +18,11 @@ predict:  ## Phase 2 — predictive baselines, calibration, SHAP
 	$(PY) -m src.predict.baselines
 	$(PY) -m src.interpret.shap_analysis
 
-causal:  ## Phase 3 — identification, CATE/uplift, risk-vs-uplift divergence
+causal:  ## Phase 3 — identification, CATE/uplift, divergence, confounding sensitivity
 	$(PY) -m src.causal.identify
 	$(PY) -m src.causal.uplift
 	$(PY) -m src.causal.divergence
+	$(PY) -m src.causal.sensitivity
 
 policy:  ## Phase 4 — causally-grounded policy simulation
 	$(PY) -m src.policy.simulate

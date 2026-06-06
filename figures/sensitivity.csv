@@ -1,0 +1,2 @@
+coef,se,t_stat,partial_r2_treatment_outcome,robustness_value,risk_ratio,e_value,benchmark_covariate,benchmark_r2_with_treatment,benchmark_r2_with_outcome
+0.1933559208239417,0.021640971608812138,8.934715331598502,0.0702208761055874,0.23963692377562554,2.8440980687715087,5.134249975527547,EnvironmentSatisfaction,0.0041448750702516276,0.019194641053887605

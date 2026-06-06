@@ -78,6 +78,21 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started
   thin, executed notebooks (`notebooks/01_eda … 04_ethics`) wrap `src/` and embed
   outputs for visual review. All six phases ✅.
 
+## Extensions (on-theme, post-Phase-6)
+
+Sharpening passes that stay on the prediction-vs-causation + ethics theme;
+each ships like a phase (branch → commit → main).
+
+- **Confounding sensitivity (Ext A):** the refuters probe the no-unobserved-
+  confounding assumption *qualitatively*; this quantifies it. On a linear
+  backdoor fit (effect +0.193, t=8.9), the Cinelli–Hazlett **robustness value is
+  RV=0.24** and the **E-value 5.13** — a hidden confounder would need to explain
+  ~24% of residual variance in *both* overtime and attrition (≈12× the strongest
+  measured covariate, EnvironmentSatisfaction at 0.019), or carry a risk-ratio
+  link ≥5.1 with both, to drive the effect to zero. Moderately robust; the
+  assumption's fragility is now *legible*, not asserted
+  (`src/causal/sensitivity.py`, `figures/sensitivity.png`).
+
 ## Environment notes
 
 - Python 3.12 (Anaconda). Auth: HTTPS via osxkeychain (push verified).

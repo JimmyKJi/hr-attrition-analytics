@@ -40,6 +40,13 @@ explicit and binding.
   EconML causal forest +0.185 (T-learner agrees, ρ=0.77); all three DoWhy
   refuters pass. Risk-vs-uplift **divergence**: Spearman ρ=0.53, top-decile
   overlap 27%; risk-targeting captures only 74% of achievable retention.
+- **Sensitivity to unobserved confounding.** (Phase 3 ext) Cinelli–Hazlett
+  robustness value **RV=0.24** and **E-value 5.13**: a hidden confounder would
+  have to explain ~24% of the residual variance in *both* overtime and attrition
+  (≈12× the strongest measured covariate's 0.019), or carry a risk-ratio
+  association ≥5.1 with both, to drive the effect to zero. Moderately robust —
+  the assumption's fragility is *quantified*, not asserted
+  (`figures/sensitivity.png`).
 - **Policy (Phase 4).** At a fixed budget, uplift-targeting beats risk-targeting
   (post-policy 13.2% vs 14.4% at a 10% budget). Full overtime relief is a causal
   16.0%→11.1% — short of v1's naive 7.8% claim.

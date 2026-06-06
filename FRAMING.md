@@ -148,8 +148,15 @@ for any cross-border employer.
   and the model card.
 - **Observational causal inference, stated honestly.** Identification
   assumptions are demonstrative; their credibility is probed with refutation
-  tests (placebo treatment, random common cause, data subset), and the
-  prediction-vs-causation framing — not a claimed effect size — is the
+  tests (placebo treatment, random common cause, data subset) and, crucially,
+  *quantified* with a formal sensitivity analysis: the Cinelli–Hazlett
+  robustness value is **RV=0.24** and the E-value **5.13**, so a confounder we
+  failed to measure would have to be ~12× more explanatory than the strongest
+  one we did (or carry a risk-ratio association ≥5.1 with both treatment and
+  outcome) to overturn the overtime effect. The point is not that the effect is
+  *true* — the data is synthetic — but that the assumption's fragility is made
+  legible rather than hidden (`src/causal/sensitivity.py`). The
+  prediction-vs-causation framing, not a claimed effect size, remains the
   contribution.
 - **No deployable tool is claimed.** The claim is a *critique of naive
   deployment*, with the machinery to back it.
