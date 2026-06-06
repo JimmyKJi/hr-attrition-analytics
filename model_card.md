@@ -78,6 +78,15 @@ Gender, MaritalStatus, and an Age band — under both targeting rules.
   reading: choosing a targeting rule is itself a distributive-justice decision
   with non-obvious, attribute-specific consequences — not a neutral model output.
   See `figures/fairness_selection_rates.png` and `FRAMING.md` §5.
+- **Efficacy–fairness frontier (Phase 5 ext).** Interpolating the targeting score
+  from pure-risk to pure-uplift (dial λ, fixed 20% budget) traces a frontier:
+  moving toward uplift-targeting is a *Pareto improvement on the worst-affected
+  group* — attrition averted +1.5 pp (2.9→4.5) **and** the weakest four-fifths
+  ratio +0.27 (0.21→0.47). But the gains are attribute-specific (Gender parity
+  erodes 0.89→0.71 while Marital/Age improve), and **no rule on this single lever
+  clears four-fifths on every attribute** (best worst-case 0.47 < 0.80). The rule
+  choice is a distributive dial, not a neutral default
+  (`figures/fairness_frontier.png`).
 
 ## Ethical considerations
 

@@ -45,6 +45,7 @@ distributive-justice judgement**, not a neutral technical default.
 | Just an overtime artefact? | 3+ | **No.** A second lever (frequent travel, ATE +0.106) diverges too: $\rho=0.55$, overlap **22%**, efficiency **69%**. Levers reach different people (70% vs 38% unreachable) and disagree on who's influenceable (cross-lever $\rho=0.71$). |
 | Does targeting the influenceable beat targeting the risky? | 4 | **Yes.** At a 20% budget, post-policy attrition **11.6% (uplift) vs 13.1% (risk)**. Full relief is a causal **16.0%→11.1%** (not 7.8%). |
 | Who gets flagged for intervention? | 5 | Risk-targeting fails the four-fifths rule on marital status (ratio **0.21**) and age (**0.27**). Uplift-targeting halves both but introduces a mild gender gap (0.89→0.71). |
+| Can you have efficacy *and* fairness? | 5+ | Risk→uplift is a **Pareto improvement** on the worst group (+1.5 pp averted *and* worst-case four-fifths 0.21→0.47), but **no rule clears four-fifths** (best 0.47) and Gender parity erodes. The rule is a distributive dial. |
 | Validated where? | 5b | The risk **ranking** ports (ROC-AUC 0.76–0.84); the **policy** does not (averts 5.8 pp where hours are long vs 1.6 pp where they aren't). |
 
 ---
@@ -241,6 +242,23 @@ The lesson is the thesis in miniature: once ethics is compressed into a score an
 the score is acted on, **the choice of decision rule is itself a
 distributive-justice judgement** with non-obvious, attribute-specific
 consequences — not a neutral technical default.
+
+**The efficacy–fairness frontier (Phase 5 ext).** To make that "decision rule"
+explicit, a single dial λ interpolates the targeting score from pure-risk (λ=0)
+to pure-uplift (λ=1) — $s_\lambda = (1-\lambda)\,z(r) + \lambda\,z(\text{realized
+}\tau)$ — at the fixed 20% budget, scored on attrition averted and on the
+**worst-case four-fifths ratio** (the minimum across the three attributes; the
+endpoints reproduce the Phase-5 audit exactly). The frontier delivers a
+non-obvious result: on the worst-affected group, moving toward uplift-targeting
+is *not* a trade-off but a **Pareto improvement** — it averts more attrition
+(**+1.5 pp**, 2.9→4.5) *and* lifts the weakest four-fifths ratio (**0.21→0.47**).
+Two honest caveats keep it from being a free lunch: the per-attribute panel shows
+the same move *erodes* Gender parity (0.89→0.71) even as it repairs Marital and
+Age, and **no setting of the dial clears the four-fifths rule on every
+attribute** (best worst-case 0.47 < 0.80). There is no value of λ that is simply
+"fair" — only positions with different, measurable distributive profiles.
+
+![Efficacy–fairness frontier](../figures/fairness_frontier.png)
 
 **Two further hazards** the predictive accuracy says nothing about: (i) acting
 on a flight-risk score can be a **self-fulfilling prophecy** and a form of

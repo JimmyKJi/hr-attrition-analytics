@@ -107,6 +107,21 @@ each ships like a phase (branch → commit → main).
   lever ρ 0.71, top-decile overlap 57%), and *neither* matches risk —
   influenceability is partly lever-specific, and a risk score knows of no lever
   at all (`src/causal/levers.py`, `figures/levers.png`, `figures/levers.csv`).
+- **Efficacy–fairness frontier (Ext C):** Phase 4 (retention) and Phase 5
+  (disparity) on one picture. A single dial λ interpolates the targeting score
+  from pure-risk (λ=0) to pure-uplift (λ=1) — `s_λ = (1−λ)·z(risk) + λ·z(realized
+  uplift)` — at the fixed 20% budget, and each λ is scored on attrition averted
+  and the **worst-case four-fifths ratio** (min across Gender/MaritalStatus/Age).
+  The endpoints reproduce the Phase-5 audit exactly (risk G0.89/M0.21/A0.27,
+  uplift G0.71/M0.59/A0.47). **Moving risk→uplift is a Pareto improvement on the
+  worst-affected group:** attrition averted **+1.5 pp** (2.9→4.5) *and* the
+  weakest four-fifths ratio **+0.27** (0.21→0.47) — fairness and efficacy move
+  together, not against each other. Two honest caveats: (i) the gains are
+  attribute-specific — the same move *erodes* Gender parity (0.89→0.71) while
+  lifting Marital/Age; (ii) **no rule on this single lever clears four-fifths on
+  every attribute** (best worst-case ratio 0.47 < 0.80). The targeting rule is a
+  distributive-justice dial, not a neutral default (`src/ethics/fairness_frontier.py`,
+  `figures/fairness_frontier.png`, `figures/fairness_frontier.csv`).
 
 ## Environment notes
 

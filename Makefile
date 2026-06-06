@@ -28,8 +28,9 @@ causal:  ## Phase 3 — identification, CATE/uplift, divergence, second lever, c
 policy:  ## Phase 4 — causally-grounded policy simulation
 	$(PY) -m src.policy.simulate
 
-ethics:  ## Phase 5 — fairness / disparate-impact audit
+ethics:  ## Phase 5 — fairness / disparate-impact audit + efficacy-fairness frontier
 	$(PY) -m src.ethics.fairness_audit
+	$(PY) -m src.ethics.fairness_frontier
 
 transport:  ## Phase 5b — transportability / distribution-shift stress test
 	$(PY) -m src.ethics.transportability

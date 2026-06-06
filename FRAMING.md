@@ -128,6 +128,16 @@ raises hazards the predictive accuracy says nothing about:
    into a score and the score is acted on, **the choice of decision rule is
    itself a distributive-justice judgement** with non-obvious, attribute-specific
    consequences — not a neutral technical default. (`figures/fairness_selection_rates.png`.)
+   To make that dial explicit, `src/ethics/fairness_frontier.py` interpolates the
+   targeting score continuously from pure-risk to pure-uplift and plots the
+   **efficacy–fairness frontier**: moving toward uplift-targeting turns out to be
+   a *Pareto improvement on the worst-affected group* — it averts more attrition
+   (+1.5 pp) *and* raises the weakest four-fifths ratio (0.21→0.47) — yet the same
+   move erodes Gender parity (0.89→0.71), and **no rule on this single lever
+   clears the four-fifths rule on every attribute** (best worst-case 0.47). The
+   frontier is the thesis made quantitative: there is no value of the dial that is
+   simply "fair", only positions with different, measurable distributive profiles
+   (`figures/fairness_frontier.png`).
 2. **Surveillance and the self-fulfilling prophecy.** Labelling someone a
    "flight risk" changes how managers treat them; the label can *produce* the
    exit it predicted. A score acted upon is not a passive measurement.
