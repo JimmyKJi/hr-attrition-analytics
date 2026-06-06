@@ -153,7 +153,7 @@ this demonstrates the method's verdict, not a real-world effect.)*
 ## How the project is organised
 
 ```
-hr-attrition-analytics/
+attrition-risk-vs-uplift/
 ├── README.md                  # this file
 ├── FRAMING.md                 # the prediction-vs-cause + ethics argument, in full
 ├── PROGRESS.md                # stage tracker + every computed number
@@ -181,8 +181,8 @@ hr-attrition-analytics/
 ## Run it yourself
 
 ```bash
-git clone https://github.com/JimmyKJi/hr-attrition-analytics.git
-cd hr-attrition-analytics
+git clone https://github.com/JimmyKJi/attrition-risk-vs-uplift.git
+cd attrition-risk-vs-uplift
 python -m venv .venv && source .venv/bin/activate
 make setup                 # install the software it needs
 make data                  # download the dataset into data/raw/ (not committed to git)

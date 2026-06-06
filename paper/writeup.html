@@ -47,7 +47,7 @@ window.MathJax = {
 </head>
 <body>
 <h1>Prediction, Causation, and the Ethics of Acting on Attrition Scores</h1>
-<p><strong>Jimmy Kaian Ji</strong> · <code>hr-attrition-analytics</code> · v2 writeup</p>
+<p><strong>Jimmy Kaian Ji</strong> · <code>attrition-risk-vs-uplift</code> · v2–v3 writeup</p>
 <blockquote>
 <p><strong>Synthetic data — read first.</strong> The dataset is the IBM HR Analytics
 benchmark, which is <strong>synthetic</strong>. Every causal and policy quantity below is
@@ -495,8 +495,8 @@ layoffs are often announced together (the simultaneity/confounding is confronted
 not papered over). A Year-2, faculty-involved extension — not a solo build.</p>
 <hr />
 <h2>Reproduce</h2>
-<pre><code>git clone https://github.com/JimmyKJi/hr-attrition-analytics.git
-cd hr-attrition-analytics
+<pre><code>git clone https://github.com/JimmyKJi/attrition-risk-vs-uplift.git
+cd attrition-risk-vs-uplift
 python -m venv .venv &amp;&amp; source .venv/bin/activate
 make setup          # install dependencies
 make data           # fetch IBM HR dataset into data/raw/ (gitignored)

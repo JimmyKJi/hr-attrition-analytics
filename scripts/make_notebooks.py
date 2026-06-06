@@ -1,4 +1,4 @@
-"""Generate the four thin review notebooks for hr-attrition-analytics.
+"""Generate the four thin review notebooks for attrition-risk-vs-uplift.
 
 Thin = no logic reimplemented; each notebook imports from `src/` for the optional
 regenerate path and otherwise displays the committed `figures/` artifacts so the

@@ -1,6 +1,6 @@
 # Prediction, Causation, and the Ethics of Acting on Attrition Scores
 
-**Jimmy Kaian Ji** · `hr-attrition-analytics` · v2 writeup
+**Jimmy Kaian Ji** · `attrition-risk-vs-uplift` · v2–v3 writeup
 
 > **Synthetic data — read first.** The dataset is the IBM HR Analytics
 > benchmark, which is **synthetic**. Every causal and policy quantity below is
@@ -394,8 +394,8 @@ not papered over). A Year-2, faculty-involved extension — not a solo build.
 ## Reproduce
 
 ```bash
-git clone https://github.com/JimmyKJi/hr-attrition-analytics.git
-cd hr-attrition-analytics
+git clone https://github.com/JimmyKJi/attrition-risk-vs-uplift.git
+cd attrition-risk-vs-uplift
 python -m venv .venv && source .venv/bin/activate
 make setup          # install dependencies
 make data           # fetch IBM HR dataset into data/raw/ (gitignored)

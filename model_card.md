@@ -10,7 +10,7 @@ explicit and binding.
   baseline) and a gradient-boosting classifier for the *predictive* risk score;
   (Phase 3) causal/uplift estimators (EconML CausalForestDML + a meta-learner)
   for *treatment effects*.
-- **Owner.** Jimmy Kaian Ji. **Repo.** `hr-attrition-analytics`.
+- **Owner.** Jimmy Kaian Ji. **Repo.** `attrition-risk-vs-uplift`.
 - **Data.** IBM HR Analytics benchmark — **synthetic** (see `DATA_LINEAGE.md`).
 
 ## Intended use
