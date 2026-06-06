@@ -92,6 +92,21 @@ each ships like a phase (branch → commit → main).
   link ≥5.1 with both, to drive the effect to zero. Moderately robust; the
   assumption's fragility is now *legible*, not asserted
   (`src/causal/sensitivity.py`, `figures/sensitivity.png`).
+- **Second treatment lever (Ext B):** the natural objection to the divergence
+  headline is that *risk ≠ uplift* might be an overtime artefact. It isn't. Re-
+  running the full risk-vs-uplift machinery on an independent lever —
+  **BusinessTravel = Travel_Frequently** (19% of staff; causal-forest ATE
+  **+0.106** vs overtime's +0.185) against the *same* treatment-agnostic risk
+  score — reproduces the divergence: Spearman ρ(risk, uplift) **0.55** (vs 0.53),
+  top-decile overlap **22%** (vs 27%), risk-targeting efficiency **69%** (vs
+  74%). The OverTime column reproduces Phase 3 to the digit (ATE +0.185, ρ 0.53,
+  overlap 27%, efficiency 74%) — a built-in consistency check. Two extra findings
+  sharpen it: (i) **reachability differs** — 70% of the top-risk decile aren't
+  frequent travellers (vs 38% not on overtime), so the lever can't touch them;
+  (ii) the two uplift rankings are **correlated but not interchangeable** (cross-
+  lever ρ 0.71, top-decile overlap 57%), and *neither* matches risk —
+  influenceability is partly lever-specific, and a risk score knows of no lever
+  at all (`src/causal/levers.py`, `figures/levers.png`, `figures/levers.csv`).
 
 ## Environment notes
 

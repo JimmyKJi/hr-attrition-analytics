@@ -40,6 +40,15 @@ explicit and binding.
   EconML causal forest +0.185 (T-learner agrees, ρ=0.77); all three DoWhy
   refuters pass. Risk-vs-uplift **divergence**: Spearman ρ=0.53, top-decile
   overlap 27%; risk-targeting captures only 74% of achievable retention.
+- **Divergence generalises beyond one lever.** (Phase 3 ext) Re-running the
+  risk-vs-uplift machinery on a second, independent lever — BusinessTravel =
+  Travel_Frequently (causal-forest ATE +0.106) against the *same* risk score —
+  reproduces it: ρ=0.55, top-decile overlap 22%, risk-targeting efficiency 69%
+  (the OverTime column reproduces Phase 3 to the digit). The two levers reach
+  different people (70% vs 38% of the top-risk decile is unreachable) and their
+  uplift rankings are correlated but not interchangeable (cross-lever ρ=0.71,
+  overlap 57%) — *risk ≠ uplift* is a property of prediction-vs-causation, not an
+  overtime artefact (`src/causal/levers.py`, `figures/levers.png`).
 - **Sensitivity to unobserved confounding.** (Phase 3 ext) Cinelli–Hazlett
   robustness value **RV=0.24** and **E-value 5.13**: a hidden confounder would
   have to explain ~24% of the residual variance in *both* overtime and attrition

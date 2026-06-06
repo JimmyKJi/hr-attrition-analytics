@@ -42,6 +42,7 @@ distributive-justice judgement**, not a neutral technical default.
 | Does overtime cause attrition? | 3 | Backdoor ATE **+0.187**; causal forest +0.185, T-learner +0.191. All three refuters pass. |
 | How robust to hidden confounders? | 3+ | Robustness value **RV 0.24**, **E-value 5.13** — a confounder ~12× the strongest measured one would be needed to overturn it. |
 | Is risk the same as influenceability? | 3 | **No.** Spearman $\rho=0.53$, top-decile overlap **27%**, risk-targeting captures **74%** of achievable retention; **38%** of the top-risk decile isn't even on overtime. |
+| Just an overtime artefact? | 3+ | **No.** A second lever (frequent travel, ATE +0.106) diverges too: $\rho=0.55$, overlap **22%**, efficiency **69%**. Levers reach different people (70% vs 38% unreachable) and disagree on who's influenceable (cross-lever $\rho=0.71$). |
 | Does targeting the influenceable beat targeting the risky? | 4 | **Yes.** At a 20% budget, post-policy attrition **11.6% (uplift) vs 13.1% (risk)**. Full relief is a causal **16.0%→11.1%** (not 7.8%). |
 | Who gets flagged for intervention? | 5 | Risk-targeting fails the four-fifths rule on marital status (ratio **0.21**) and age (**0.27**). Uplift-targeting halves both but introduces a mild gender gap (0.89→0.71). |
 | Validated where? | 5b | The risk **ranking** ports (ROC-AUC 0.76–0.84); the **policy** does not (averts 5.8 pp where hours are long vs 1.6 pp where they aren't). |
@@ -167,6 +168,24 @@ employee twice, by $r(x)$ and by $\hat\tau(x)$:
 Headline: *targeting the highest-risk employees is not the same as targeting the
 ones an intervention can actually retain.* Acting on the predictive score wastes
 effort and can concentrate it on the wrong people.
+
+**Is this just an overtime artefact? No — a second lever.** The natural objection
+is that divergence might be peculiar to overtime. `src/causal/levers.py` re-runs
+the entire risk-vs-uplift pipeline on an independent lever — *frequent business
+travel* (BusinessTravel = Travel_Frequently, 19% of staff; causal-forest
+**ATE +0.106** vs overtime's +0.185) — held against the **same** treatment-agnostic
+risk score, so only the lever changes. The divergence reproduces: **$\rho=0.55$,
+top-decile overlap 22%, risk-targeting efficiency 69%** (and the overtime column
+reproduces Phase 3 to the digit — a built-in consistency check). Two further
+findings sharpen the point: (i) the levers **reach different people** — 70% of the
+top-risk decile aren't frequent travellers (vs 38% not on overtime), so that lever
+can't touch them; (ii) the two uplift rankings are **correlated but not
+interchangeable** (cross-lever $\rho=0.71$, top-decile overlap 57%), and *neither*
+matches risk. Influenceability is partly lever-specific, while a risk score knows
+of no lever at all — *risk ≠ uplift* is a property of prediction-vs-causation, not
+of one treatment.
+
+![Divergence generalises to a second lever](../figures/levers.png)
 
 ## 6. Causally-grounded policy simulation (Phase 4)
 

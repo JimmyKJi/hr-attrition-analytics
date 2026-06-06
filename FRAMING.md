@@ -73,6 +73,22 @@ lever can't touch them. Headline:
 intervention can actually retain — acting on the predictive score wastes effort
 and can harm the wrong people.*
 
+**Not a one-treatment artefact.** The obvious objection is that this divergence
+is peculiar to overtime. `src/causal/levers.py` re-runs the entire risk-vs-uplift
+machinery on a second, independent lever — *frequent business travel*
+(BusinessTravel = Travel_Frequently; causal-forest ATE +0.106 vs overtime's
++0.185) — against the **same** treatment-agnostic risk score, and the divergence
+reproduces: $\rho=0.55$, top-decile overlap **22%**, risk-targeting efficiency
+**69%**. (The overtime column reproduces Phase 3 to the digit — a built-in
+consistency check.) Two further points follow. First, the levers **reach
+different people**: 70% of the top-risk decile aren't frequent travellers (vs 38%
+not on overtime), so that lever simply can't touch them. Second, the two uplift
+rankings are **correlated but not interchangeable** (cross-lever $\rho=0.71$,
+top-decile overlap 57%), and *neither* matches the risk ranking — influenceability
+is partly lever-specific, while a risk score knows of no lever at all. Risk ≠
+uplift is thus a property of prediction-vs-causation, not of one treatment
+(`figures/levers.png`).
+
 ## 4. Causally-grounded policy simulation
 
 v1's counterfactual ("a 3-lever package cuts firm attrition 16.1% → 7.8%") is
