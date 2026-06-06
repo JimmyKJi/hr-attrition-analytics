@@ -40,7 +40,7 @@ distributive-justice judgement**, not a neutral technical default.
 | --- | --- | --- |
 | Who is likely to leave? | 2 | Logistic regression: test **ROC-AUC 0.814**, PR-AUC 0.588, Brier 0.098 (CV ROC-AUC 0.847); calibrated. |
 | Does overtime cause attrition? | 3 | Backdoor ATE **+0.187**; causal forest +0.185, T-learner +0.191. All three refuters pass. |
-| How robust to hidden confounders? | 3+ | Robustness value **RV 0.24**, **E-value 5.13** — a confounder ~12× the strongest measured one would be needed to overturn it. |
+| How would you stress-test for hidden confounders? | 3+ | Robustness value **RV 0.24**, **E-value 5.13** — demonstrates the unmeasured-confounding sensitivity step (method; the synthetic data has no true effect to defend). |
 | Is risk the same as influenceability? | 3 | **No.** Spearman $\rho=0.53$, top-decile overlap **27%**, risk-targeting captures **74%** of achievable retention; **38%** of the top-risk decile isn't even on overtime. |
 | Just an overtime artefact? | 3+ | **No.** A second lever (frequent travel, ATE +0.106) diverges too: $\rho=0.55$, overlap **22%**, efficiency **69%**. Levers reach different people (70% vs 38% unreachable) and disagree on who's influenceable (cross-lever $\rho=0.71$). |
 | Does targeting the influenceable beat targeting the risky? | 4 | **Yes.** At a 20% budget, post-policy attrition **11.6% (uplift) vs 13.1% (risk)**. Full relief is a causal **16.0%→11.1%** (not 7.8%). |
@@ -133,18 +133,23 @@ T-learner +0.191; CATE rank-agreement $\rho=0.77$ between estimators). All three
 refuters pass — the placebo new-effect is ≈ 0 (−0.003), and both the
 random-common-cause (0.187) and 80%-subset (0.192) re-estimates are stable.
 
-**How robust is that to *unmeasured* confounding?** The refuters probe the
-no-unobserved-confounding assumption only qualitatively, so a formal sensitivity
-analysis quantifies it (Cinelli–Hazlett robustness value + VanderWeele E-value;
-linear backdoor fit, effect +0.193, $t=8.9$). The **robustness value is
-RV = 0.24** — an unobserved confounder would have to explain ~24% of the residual
-variance in *both* overtime and attrition to drive the effect to zero, roughly
-**12× the strongest covariate we did measure** (EnvironmentSatisfaction, 0.019).
-Equivalently the **E-value is 5.13**: confounding would need a risk-ratio
-association ≥ 5.1 with both treatment and outcome, beyond the measured
-covariates, to explain it away. Moderately robust — not bulletproof, but the
-assumption's fragility is *quantified*, not asserted (synthetic data, so this is
-a statement about method honesty, not a defended effect).
+**How would you stress-test the *unmeasured*-confounding assumption?** The
+refuters probe it only qualitatively, so a formal sensitivity analysis quantifies
+it (Cinelli–Hazlett robustness value + VanderWeele E-value; linear backdoor fit,
+effect +0.193, $t=8.9$). The **robustness value is RV = 0.24** — an unobserved
+confounder would have to explain ~24% of the residual variance in *both* overtime
+and attrition to move the estimate to zero, roughly **12× the strongest covariate
+we did measure** (EnvironmentSatisfaction, 0.019). Equivalently the **E-value is
+5.13**: confounding would need a risk-ratio association ≥ 5.1 with both treatment
+and outcome, beyond the measured covariates, to explain it away.
+
+**Read this as method, full stop.** The IBM benchmark has *no ground-truth causal
+structure*, so RV 0.24 and E-value 5.13 do not show that a real overtime→attrition
+effect is robust — and the E-value in particular must not be read as "this effect
+is robust." They demonstrate the robustness-quantification *step* you would run on
+real data, and what the procedure returns on this synthetic fixture. The
+contribution is the *procedure* — making the no-unobserved-confounding
+assumption's fragility legible in numbers — not a defended effect size.
 
 ![Sensitivity to unobserved confounding](../figures/sensitivity.png)
 

@@ -2,7 +2,7 @@
 
 The ethical object of study is not the model's accuracy but *who gets acted on*.
 A retention budget flags the top-k employees for intervention; this module asks
-whether that flag falls unevenly across protected-ish attributes — Gender,
+whether that flag falls unevenly across sensitive attributes — Gender,
 MaritalStatus, and an Age band — and whether the choice of *targeting rule*
 (risk vs uplift) changes the answer.
 

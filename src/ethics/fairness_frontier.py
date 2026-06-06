@@ -2,7 +2,7 @@
 
 Phase 4 showed uplift-targeting retains more people than risk-targeting; Phase 5
 showed the two rules distribute the *intervention flag* differently across
-protected groups. This module puts both axes on one picture and asks the
+sensitive groups. This module puts both axes on one picture and asks the
 governance question directly: **as you move the targeting rule from pure-risk to
 pure-uplift, what is the joint consequence for retention and for fairness?**
 

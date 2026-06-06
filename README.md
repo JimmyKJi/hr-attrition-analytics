@@ -44,7 +44,7 @@ computed numbers are in **[`PROGRESS.md`](PROGRESS.md)**.
 | --- | --- | --- |
 | Who is likely to leave? | 2 | Logistic regression: test **ROC-AUC 0.81**, PR-AUC 0.59, calibrated. |
 | Does overtime *cause* attrition? | 3 | Backdoor ATE **+0.187**; causal forest +0.185; all three refuters pass. |
-| How robust to hidden confounders? | 3+ | **RV 0.24**, **E-value 5.13** — a confounder ~12× the strongest *measured* one would be needed to overturn it. |
+| How would you stress-test for hidden confounders? | 3+ | **RV 0.24**, **E-value 5.13** — demonstrates the unmeasured-confounding sensitivity step (method; the synthetic data has no true effect to defend). |
 | Is risk the same as influenceability? | 3 | **No.** Spearman ρ **0.53**, top-decile overlap **27%**; risk-targeting captures only **74%** of achievable retention. |
 | Just an overtime artefact? | 3+ | **No.** A second lever (frequent travel) diverges too (ρ 0.55, overlap 22%); the levers reach different people. |
 | Does targeting the influenceable win? | 4 | **Yes.** At a 20% budget, post-policy **11.6% (uplift) vs 13.1% (risk)**; full relief is a causal **16.0%→11.1%** (not v1's 7.8%). |
@@ -65,10 +65,10 @@ here is in going two steps further, in the direction of the research question
 1. **Prediction ≠ causation, made rigorous.** A causal/uplift layer
    (`econml` CausalForestDML + meta-learners, identified with `dowhy`) estimates
    *treatment effects*, and a divergence analysis shows the highest-risk
-   employees are often not the most *influenceable*. The effect survives a
-   formal unmeasured-confounding sensitivity analysis (robustness value,
-   E-value) and the divergence reproduces on a second, independent lever — so it
-   is neither a confounding artefact nor a one-treatment fluke.
+   employees are often not the most *influenceable*. The workflow adds a formal
+   unmeasured-confounding sensitivity analysis (robustness value, E-value) and
+   reproduces the divergence on a second, independent lever — the checks that, on
+   real data, would rule out a confounding artefact or a one-treatment fluke.
 2. **Causally-grounded policy simulation.** The counterfactual is rebuilt on
    the causal estimates, so the headline reduction is defensible rather than a
    naive re-scoring of the predictive model.
@@ -155,9 +155,12 @@ model, and Phase 4 asks whether it survives a *causal* redo.
 
 ## Honest guardrails
 
-- **Synthetic data → method, not truth.** All causal numbers illustrate the
-  method. Stated plainly because it is a strength (demonstrated rigour), not a
-  weakness to hide.
+- **Synthetic data → method, not truth.** The IBM benchmark has *no ground-truth
+  causal structure*, so every causal number — the ATE (+0.187), the E-value
+  (5.13), the divergence stats — illustrates the *workflow*, not a real effect.
+  The E-value in particular reads as "here is how I would test robustness," not
+  "this effect is robust." Stated plainly because it is a strength (demonstrated
+  rigour), not a weakness to hide.
 - **Observational causal inference, stated honestly.** Identification
   assumptions are demonstrative and probed with refutation tests; the
   prediction-vs-causation framing is the contribution, not a claimed effect.

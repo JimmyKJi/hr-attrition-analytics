@@ -50,11 +50,12 @@ explicit and binding.
   overlap 57%) — *risk ≠ uplift* is a property of prediction-vs-causation, not an
   overtime artefact (`src/causal/levers.py`, `figures/levers.png`).
 - **Sensitivity to unobserved confounding.** (Phase 3 ext) Cinelli–Hazlett
-  robustness value **RV=0.24** and **E-value 5.13**: a hidden confounder would
-  have to explain ~24% of the residual variance in *both* overtime and attrition
-  (≈12× the strongest measured covariate's 0.019), or carry a risk-ratio
-  association ≥5.1 with both, to drive the effect to zero. Moderately robust —
-  the assumption's fragility is *quantified*, not asserted
+  robustness value **RV=0.24** and **E-value 5.13**: the workflow that quantifies
+  how strong an unmeasured confounder would have to be — explain ~24% of residual
+  variance in *both* overtime and attrition (≈12× the strongest measured
+  covariate's 0.019), or a risk-ratio association ≥5.1 with both — to move the
+  estimate to zero. The synthetic data has no ground-truth causal structure, so
+  this demonstrates the sensitivity *method*, not that any real effect is robust
   (`figures/sensitivity.png`).
 - **Policy (Phase 4).** At a fixed budget, uplift-targeting beats risk-targeting
   (post-policy 13.2% vs 14.4% at a 10% budget). Full overtime relief is a causal

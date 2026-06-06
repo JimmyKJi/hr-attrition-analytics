@@ -21,8 +21,11 @@ standard tool stated in its own language:
      away.
 
 Both are computed by hand from a single OLS fit (statsmodels), so the result is
-exact and version-independent. Synthetic data: this quantifies the *fragility of
-the method's assumption*, not a defended real-world effect.
+exact and version-independent. Read this strictly as method: the IBM benchmark
+has no ground-truth causal structure, so the RV and E-value below do *not*
+establish that a real overtime→attrition effect is robust. They demonstrate the
+robustness-quantification *step* of a causal workflow — what you would compute,
+and report, on data where the effect were real.
 """
 from __future__ import annotations
 
@@ -202,11 +205,12 @@ def main() -> None:
           "the measured covariates, to explain it away.")
     print(f"\nFigure -> {path}")
     print(
-        "\nReading: the overtime effect is moderately robust — not bulletproof, "
-        "but it would\ntake a fairly strong hidden confounder to overturn. On "
-        "synthetic data this is a\nstatement about the method's honesty (we can "
-        "*quantify* the assumption's fragility),\nnot a defence of a real-world "
-        "effect size."
+        "\nReading: this is the robustness-quantification STEP of a causal "
+        "workflow — what\nyou would report on real data. The IBM benchmark has no "
+        "ground-truth causal\nstructure, so the RV and E-value above do NOT show "
+        "that a real overtime→attrition\neffect is robust; they show HOW the "
+        "no-unobserved-confounding assumption would be\nstress-tested, and what "
+        "the procedure returns on this synthetic fixture. Method, not\neffect."
     )
 
 

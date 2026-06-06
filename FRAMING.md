@@ -113,7 +113,7 @@ then optimises?* An attrition score is exactly such a number. Acting on it
 raises hazards the predictive accuracy says nothing about:
 
 1. **Disparate impact — and the targeting rule as a distributive choice.** If
-   $r(x)$ tracks protected-ish attributes, then "intervene on the high-risk"
+   $r(x)$ tracks sensitive attributes, then "intervene on the high-risk"
    silently allocates scrutiny and resources unevenly. Phase 5 audits this with
    `fairlearn` (demographic-parity and equalized-odds differences) on **who gets
    flagged for intervention**, not just on classifier error — and finds the
@@ -176,12 +176,16 @@ for any cross-border employer.
   assumptions are demonstrative; their credibility is probed with refutation
   tests (placebo treatment, random common cause, data subset) and, crucially,
   *quantified* with a formal sensitivity analysis: the Cinelli–Hazlett
-  robustness value is **RV=0.24** and the E-value **5.13**, so a confounder we
-  failed to measure would have to be ~12× more explanatory than the strongest
-  one we did (or carry a risk-ratio association ≥5.1 with both treatment and
-  outcome) to overturn the overtime effect. The point is not that the effect is
-  *true* — the data is synthetic — but that the assumption's fragility is made
-  legible rather than hidden (`src/causal/sensitivity.py`). The
+  robustness value is **RV=0.24** and the E-value **5.13**. Read these as the
+  robustness-quantification *step* of the workflow, not a robustness *result*:
+  the IBM data has no ground-truth causal structure, so they cannot show that a
+  real overtime effect is robust — they show *how* the no-unobserved-confounding
+  assumption would be stress-tested on data where the effect were real (and what
+  the procedure returns on this synthetic fixture: a confounder ~12× more
+  explanatory than the strongest measured one, or a risk-ratio ≥5.1 with both
+  treatment and outcome, would move the estimate to zero). The point is not that
+  the effect is *true* — the data is synthetic — but that the assumption's
+  fragility is made legible rather than hidden (`src/causal/sensitivity.py`). The
   prediction-vs-causation framing, not a claimed effect size, remains the
   contribution.
 - **No deployable tool is claimed.** The claim is a *critique of naive

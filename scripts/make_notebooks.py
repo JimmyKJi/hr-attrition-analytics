@@ -144,12 +144,13 @@ write("03_causal.ipynb", [
        "placebo new-effect ≈ 0 = good; random-common-cause / subset ≈ estimated "
        "= robust."),
     code("cau", "display(pd.read_csv('figures/refutation.csv').round(4))"),
-    md("cau", "## How robust to *unmeasured* confounding? (Ext A)\n"
+    md("cau", "## Stress-testing the *unmeasured*-confounding assumption (Ext A)\n"
        "\nThe refuters probe the no-unobserved-confounding assumption only "
        "qualitatively; this quantifies it — the Cinelli–Hazlett robustness value "
-       "(**RV 0.24**) and the VanderWeele **E-value 5.13**. A hidden confounder "
-       "would have to be ~12× more explanatory than the strongest measured "
-       "covariate to overturn the effect."),
+       "(**RV 0.24**) and the VanderWeele **E-value 5.13**. Read as method: the "
+       "synthetic data has no ground-truth causal structure, so these numbers "
+       "show *how* you would test robustness, not that a real overtime effect "
+       "is robust."),
     code("cau",
          "display(pd.read_csv('figures/sensitivity.csv').round(4))\n"
          "Image('figures/sensitivity.png')"),

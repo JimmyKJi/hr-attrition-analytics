@@ -86,11 +86,12 @@ each ships like a phase (branch → commit → main).
 - **Confounding sensitivity (Ext A):** the refuters probe the no-unobserved-
   confounding assumption *qualitatively*; this quantifies it. On a linear
   backdoor fit (effect +0.193, t=8.9), the Cinelli–Hazlett **robustness value is
-  RV=0.24** and the **E-value 5.13** — a hidden confounder would need to explain
-  ~24% of residual variance in *both* overtime and attrition (≈12× the strongest
-  measured covariate, EnvironmentSatisfaction at 0.019), or carry a risk-ratio
-  link ≥5.1 with both, to drive the effect to zero. Moderately robust; the
-  assumption's fragility is now *legible*, not asserted
+  RV=0.24** and the **E-value 5.13** — i.e. a hidden confounder would need to
+  explain ~24% of residual variance in *both* overtime and attrition (≈12× the
+  strongest measured covariate, EnvironmentSatisfaction at 0.019), or carry a
+  risk-ratio link ≥5.1 with both, to move the estimate to zero. Read as method:
+  the synthetic data has no ground-truth causal structure, so this shows *how*
+  the assumption would be stress-tested, not that a real effect is robust
   (`src/causal/sensitivity.py`, `figures/sensitivity.png`).
 - **Second treatment lever (Ext B):** the natural objection to the divergence
   headline is that *risk ≠ uplift* might be an overtime artefact. It isn't. Re-
