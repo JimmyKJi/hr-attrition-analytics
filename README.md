@@ -1,145 +1,192 @@
-# HR Attrition — Prediction, Causation, and the Ethics of Acting on Scores
+# HR Attrition — who will leave, who you can actually keep, and whether it's fair to act on the score
 
-**A study of *why predictive HR models mislead intervention* — and the ethics of
-acting on attrition risk.** Predictive models rank employees by *risk*; firms
-then act as if risk marks *where intervention works*. It doesn't. This project
-builds the causal/uplift layer that most attrition notebooks skip, shows that
-the **risk ranking and the treatment-effect ranking diverge**, rebuilds the
-policy simulation on causal estimates, and audits the fairness of acting on the
-score at all.
+**Most "employee attrition" projects answer one question: *who is likely to quit?*
+This one answers the two that actually matter to a manager — *who can we keep if we
+act?* and *is it fair to act on this list at all?* — and shows that those are not the
+same list of people.**
 
-> ### ⚠️ Synthetic data — read first
-> v1 uses the **IBM HR Analytics** benchmark, which is **synthetic**. Every
-> causal/policy number here is therefore **illustrative of the method, not an
-> estimate of any real-world effect**. That is a feature: this is a
-> demonstration of *rigour*, not a deployable HR tool. See
+Here is the problem the project is built around. A company trains a model that scores
+each employee's *risk* of leaving, then spends its limited retention budget on the
+highest-risk names. The unspoken assumption is that "high risk" means "someone we can
+do something about." This project shows that assumption is wrong: the people most
+likely to leave are often *not* the people a manager can most influence. It then
+rebuilds the retention plan around who is genuinely *moveable*, and audits whether
+acting on the score treats different groups of people fairly.
+
+> ### ⚠️ Read this first — the data is synthetic
+> The dataset (IBM's HR Analytics benchmark) was *invented* by data scientists, not
+> collected from a real company, so it contains no real cause-and-effect. Every
+> cause-and-effect number below therefore demonstrates *how the analysis is done* —
+> it is **not** a finding about any real workforce. That is the whole point: this is
+> a showcase of rigorous method, not a tool to deploy. See
 > [Honest guardrails](#honest-guardrails) and [`FRAMING.md`](FRAMING.md).
 
-The full argument lives in **[`FRAMING.md`](FRAMING.md)**. Live status and
-computed numbers are in **[`PROGRESS.md`](PROGRESS.md)**.
+The full argument lives in **[`FRAMING.md`](FRAMING.md)**, and every computed number
+(plus live status) is in **[`PROGRESS.md`](PROGRESS.md)**. For the narrative writeup,
+read **[`paper/writeup.md`](paper/writeup.md)** — or just open the self-contained
+**[`paper/writeup.html`](paper/writeup.html)** in any browser (figures and equations
+included; "Print → Save as PDF" for a shareable copy).
 
 ---
 
-## The thesis in one diagram
+## The idea in one picture
 
 ```
-  predictive model            causal / uplift model
-  r(x) = P(leaves | x)        τ(x) = effect of an intervention on x
+  a RISK model                  a CAUSE-AND-EFFECT model
+  "how likely is this           "how much would one action
+   person to leave?"             (here: relieving overtime) change that?"
         │                              │
         ▼                              ▼
-  rank by RISK                  rank by UPLIFT (influenceability)
+  rank people by RISK           rank people by INFLUENCEABILITY
         └──────────────┬───────────────┘
                        ▼
-        these rankings DIVERGE  ← the result the project exists for
-        (Spearman ρ, top-decile overlap, wasted-effort %)
+        the two rankings DISAGREE   ← the result the whole project exists for
                        ▼
-   acting on risk wastes effort and can harm the wrong people
+        acting on risk alone wastes effort on people you can't move
                        ▼
-        fairness audit + model card = ethics, in code
+        …and can fall hardest on the wrong groups → a fairness problem
 ```
 
-## Results at a glance
+**In plain words:** a *risk* model ranks people by how likely they are to leave. A
+*cause-and-effect* model ranks them by how much a specific action would actually
+change that. Those two rankings don't match — and that mismatch is the finding.
+Spending your retention budget by risk alone puts effort into people you can't move,
+and can single out the wrong groups.
 
-| Question | Phase | Result |
-| --- | --- | --- |
-| Who is likely to leave? | 2 | Logistic regression: test **ROC-AUC 0.81**, PR-AUC 0.59, calibrated. |
-| Does overtime *cause* attrition? | 3 | Backdoor ATE **+0.187**; causal forest +0.185; all three refuters pass. |
-| How would you stress-test for hidden confounders? | 3+ | **RV 0.24**, **E-value 5.13** — demonstrates the unmeasured-confounding sensitivity step (method; the synthetic data has no true effect to defend). |
-| Is risk the same as influenceability? | 3 | **No.** Spearman ρ **0.53**, top-decile overlap **27%**; risk-targeting captures only **74%** of achievable retention. |
-| Just an overtime artefact? | 3+ | **No.** A second lever (frequent travel) diverges too (ρ 0.55, overlap 22%); the levers reach different people. |
-| Does targeting the influenceable win? | 4 | **Yes.** At a 20% budget, post-policy **11.6% (uplift) vs 13.1% (risk)**; full relief is a causal **16.0%→11.1%** (not v1's 7.8%). |
-| Who gets flagged for intervention? | 5 | Risk-targeting fails the four-fifths rule on marital status (**0.21**) and age (**0.27**). |
-| Efficacy *and* fairness? | 5+ | Risk→uplift is a **Pareto improvement** on the worst group, but **no rule clears four-fifths**; the rule is a distributive dial. |
-| Validated where? | 5b | The risk **ranking** ports (ROC-AUC 0.76–0.84); the **policy** does not. |
+## What the project found
 
-Full numbers in [`PROGRESS.md`](PROGRESS.md); the narrative in
-[`paper/writeup.md`](paper/writeup.md) (or the self-contained
-[`paper/writeup.html`](paper/writeup.html), figures embedded + maths rendered).
+Synthetic data, so read these as *demonstrations of the method*, not facts about a
+real company. The interesting results are the **structural** ones — the gap between
+the two rankings, and what it does to the retention plan and to fairness.
 
-## Why this is not another attrition classifier
+| The question | What the analysis shows |
+| --- | --- |
+| **Who's likely to leave?** | A standard model predicts this well — it ranks employees by risk reliably and its scores are trustworthy as probabilities. |
+| **Does overtime push people out?** | The cause-and-effect layer estimates a large effect (~19 points more likely to leave). On synthetic data this *demonstrates the workflow*; it is not a real-world number. |
+| **Would a hidden factor overturn that?** | The project runs the formal stress-test you'd run on real data (and a second, independent lever as a cross-check). Again: this shows *how* you'd test robustness, not that a real effect is robust. |
+| **Is "most likely to leave" the same as "most moveable"?** | **No — this is the key result.** The two lists only modestly overlap. Targeting the highest-risk people captures only about **three-quarters** of the retention you'd get by targeting the most *moveable* people. |
+| **Is that just a quirk of overtime?** | **No.** A second, unrelated lever (frequent business travel) shows the same disagreement — so it's a property of risk-vs-influence, not one weird variable. |
+| **Does targeting the moveable actually do better?** | **Yes.** At the same budget, the smarter list leaves measurably fewer people quitting (**11.6% vs 13.1%**). |
+| **Is it fair to act on the risk score?** | **Not automatically.** The "act on the highest-risk" rule flags some groups far more than others — it fails a standard fairness threshold on marital status and age. |
+| **Can you be both effective *and* fairer?** | **Partly.** Shifting toward the "moveable" list helps the worst-off group *and* averts more attrition — but no single rule clears the fairness bar on every attribute. So it's a deliberate choice, not a neutral default. |
+| **Does any of this transfer to another workforce?** | The risk *ranking* travels reasonably well; the retention *plan* does **not**. A model that predicts well somewhere can still recommend a plan that does nothing there. (**v3**, below, pushes this test across whole *datasets*.) |
 
-A logistic regression that predicts who quits is a solved exercise. The value
-here is in going two steps further, in the direction of the research question
-*what happens when ethics becomes a number an institution acts on*:
+*Exact statistics — confidence checks, the divergence measures, the robustness
+values, the fairness ratios — are in [`PROGRESS.md`](PROGRESS.md) and the writeup.*
 
-1. **Prediction ≠ causation, made rigorous.** A causal/uplift layer
-   (`econml` CausalForestDML + meta-learners, identified with `dowhy`) estimates
-   *treatment effects*, and a divergence analysis shows the highest-risk
-   employees are often not the most *influenceable*. The workflow adds a formal
-   unmeasured-confounding sensitivity analysis (robustness value, E-value) and
-   reproduces the divergence on a second, independent lever — the checks that, on
-   real data, would rule out a confounding artefact or a one-treatment fluke.
-2. **Causally-grounded policy simulation.** The counterfactual is rebuilt on
-   the causal estimates, so the headline reduction is defensible rather than a
-   naive re-scoring of the predictive model.
-3. **Ethics / fairness / governance, in code.** A `fairlearn` audit of *who
-   gets intervened on*, an efficacy–fairness frontier that makes the targeting
-   rule's distributive trade-off explicit, a model card, and the normative
-   argument against acting on flight-risk scores.
-4. **Transportability.** A distribution-shift stress test: a model validated in
-   one labour market is not validated for another.
+## Why this is more than a "who will quit" model
 
-## Repository layout
+A model that predicts who quits is a solved exercise. The value here is in going
+several steps further:
+
+1. **Prediction is not the same as cause.** Knowing *who* will leave doesn't tell you
+   *what to do*. The project adds a layer that estimates the effect of an actual
+   intervention — and then pressure-tests it (could a hidden factor explain it away?
+   does a second, unrelated lever behave the same way?).
+2. **The retention plan is rebuilt on causes, not wishful re-scoring.** The headline
+   "we could cut attrition to *X*" is recomputed from the cause-and-effect estimates,
+   so it's defensible rather than optimistic.
+3. **Ethics is written into the code, not bolted on afterward.** There's an automated
+   fairness audit of *who gets singled out for intervention*, a frontier showing the
+   trade-off between effectiveness and fairness, and a "model card" stating plainly
+   what the model must **not** be used for.
+4. **It asks whether the conclusions travel.** A model that works for one workforce
+   isn't automatically valid for another — tested first *within* this dataset (v2)
+   and now *across* different datasets (v3).
+
+## The versions, briefly
+
+This repo has grown in clearly-labelled stages. Earlier notes confusingly called a
+*future* idea "v2"; here is the accurate picture.
+
+- **v1 — the baseline (preserved).** A competent, conventional attrition analysis:
+  explore the data, run the standard statistical tests, fit a risk model, segment by
+  risk, and sketch a retention plan. It's kept intact in
+  [`hr-attrition-analysis.ipynb`](hr-attrition-analysis.ipynb). Its headline — a
+  3-lever package "cuts predicted attrition from 16% to 8%" — is exactly the kind of
+  claim v2 then puts under scrutiny.
+- **v2 — the cause-and-effect study (the heart of the project; complete).**
+  Everything described above: prediction → cause → the risk-vs-moveable
+  disagreement → a causally-grounded retention plan → a fairness audit → a transfer
+  test. Built as a clean, tested, reproducible Python pipeline rather than a single
+  notebook.
+- **v3 — does it hold up on *other* datasets? (in progress).** v2's findings come
+  from one synthetic dataset. v3 re-runs the same analysis on additional
+  employee-turnover datasets and asks the honest question: do the results repeat —
+  and where they *don't*, **why**? (Different workforces, different real drivers,
+  different quirks in how each dataset was built.)
+
+## Honest guardrails
+
+- **Synthetic data → method, not truth.** The IBM benchmark has *no real
+  cause-and-effect built in*, so every causal number — the effect of overtime, the
+  robustness checks, the divergence statistics — illustrates the *workflow*, not a
+  real effect. Said plainly because it's a strength (demonstrated rigour), not a
+  weakness to hide.
+- **Honest about the limits of cause-and-effect from observational data.** Even on
+  real data, this kind of analysis rests on assumptions. The project *states* them,
+  *tests* them, and *quantifies how fragile* they are — rather than quietly assuming
+  them away.
+- **No deployable tool is claimed.** This is a critique of using such scores naively,
+  with the machinery to back the critique up. The model card says, in as many words:
+  do not use this to make decisions against individuals.
+
+## How the project is organised
 
 ```
 hr-attrition-analytics/
 ├── README.md                  # this file
-├── FRAMING.md                 # the prediction-vs-causation + ethics argument
-├── PROGRESS.md                # phase tracker + computed results
-├── DATA_LINEAGE.md            # data sources (raw data is gitignored)
+├── FRAMING.md                 # the prediction-vs-cause + ethics argument, in full
+├── PROGRESS.md                # stage tracker + every computed number
+├── DATA_LINEAGE.md            # where each dataset comes from (raw data is gitignored)
 ├── model_card.md              # intended use, limits, fairness findings
-├── requirements.txt / .lock   # pinned env (.lock = exact, via `make lock`)
-├── Makefile                   # `make help` for all targets
-├── scripts/                   # notebook + writeup-HTML builders (not in `make all`)
-├── src/
-│   ├── config.py              # paths + the one random seed
-│   ├── data/                  # download + load + split (no leakage)
-│   ├── predict/               # logit + GBM, CV, calibration   (Phase 2)
-│   ├── interpret/             # SHAP attribution               (Phase 2)
-│   ├── causal/                # identify · uplift · divergence · levers · sensitivity (Phase 3/3+)
-│   ├── policy/                # causally-grounded simulation    (Phase 4)
-│   ├── ethics/                # fairness audit · frontier · transportability (Phase 5/5b)
-│   └── viz/                   # shared figure helpers
-├── tests/                     # schema + pipeline tests
-├── notebooks/                 # thin notebooks (01_eda … 04_ethics)
-├── figures/                   # generated figures (committed)
-├── paper/                     # writeup.md + self-contained writeup.html
-└── hr-attrition-analysis.ipynb  # v1 (the predictive baseline, preserved)
+├── requirements.txt / .lock   # the software environment (.lock = exact versions)
+├── Makefile                   # `make help` lists everything you can run
+├── scripts/                   # builders for the notebooks + the HTML writeup
+├── src/                       # all the analysis code, by stage:
+│   ├── data/                  # download, load, and split the data (no leakage)
+│   ├── predict/               # the risk model (Phase 2)
+│   ├── interpret/             # what drives the score (Phase 2)
+│   ├── causal/                # cause, influenceability, the divergence (Phase 3)
+│   ├── policy/                # the causally-grounded retention plan (Phase 4)
+│   ├── ethics/                # fairness audit + transfer test (Phase 5)
+│   └── viz/                   # shared chart helpers
+├── tests/                     # automated checks on the data + pipeline
+├── notebooks/                 # short, readable review notebooks (01–04)
+├── figures/                   # the charts (committed, so you can browse without running)
+├── paper/                     # the writeup (.md and self-contained .html)
+└── hr-attrition-analysis.ipynb  # v1 — the original baseline, preserved
 ```
 
-## Reproduce
+## Run it yourself
 
 ```bash
 git clone https://github.com/JimmyKJi/hr-attrition-analytics.git
 cd hr-attrition-analytics
 python -m venv .venv && source .venv/bin/activate
-make setup                 # install dependencies (pinned in requirements.txt)
-make data                  # fetch the IBM HR dataset into data/raw/ (gitignored)
-make all                   # predict → causal → policy → ethics → transport
-make test                  # schema + pipeline tests
-make notebooks             # regenerate + execute the four review notebooks
-make paper-html            # render paper/writeup.html (figures embedded, MathJax)
+make setup                 # install the software it needs
+make data                  # download the dataset into data/raw/ (not committed to git)
+make all                   # run the whole pipeline: predict → cause → plan → fairness → transfer
+make test                  # run the automated checks
+make notebooks             # rebuild and run the review notebooks
+make paper-html            # rebuild the shareable HTML writeup
 ```
 
-`make help` lists every target. The single random seed lives in
-[`src/config.py`](src/config.py). For a byte-for-byte environment,
-`pip install -r requirements.lock` (exact versions, written by `make lock`)
-instead of `make setup`.
+`make help` lists every command. The single random seed (so results reproduce
+exactly) lives in [`src/config.py`](src/config.py). For an identical environment,
+`pip install -r requirements.lock` in place of `make setup`.
 
 ---
 
-## v1 — the predictive baseline (preserved)
+## v1 — a closer look at the baseline
 
-v1 is a competent, conventional attrition analysis — kept intact in
-[`hr-attrition-analysis.ipynb`](hr-attrition-analysis.ipynb) as the baseline the
-v2 work interrogates. Its method: EDA → chi-square / t-tests → class-balanced
-logistic regression → risk segmentation → a counterfactual policy simulation.
-
-Its central finding — *overtime and promotion-cadence dominate, and a 3-lever
-package cuts predicted firm attrition from **16.1% to 7.8%*** — is exactly the
-kind of result this project then puts under causal scrutiny (see
-[`FRAMING.md`](FRAMING.md) §4): that number is a re-scoring of the predictive
-model, and Phase 4 asks whether it survives a *causal* redo.
+v1 is the conventional analysis the rest of the project interrogates. Its method:
+explore the data → standard significance tests → a balanced risk model → risk
+segmentation → a retention simulation. Its central claim — *overtime and
+slow promotions dominate, and a 3-lever package cuts predicted attrition from
+**16.1% to 7.8%*** — is precisely the number v2 re-examines: it turns out to be an
+optimistic re-scoring of the prediction model, and the causal redo lands at a more
+honest 16.0% → 11.1%.
 
 ### v1 key visuals
 
@@ -153,39 +200,24 @@ model, and Phase 4 asks whether it survives a *causal* redo.
 
 ---
 
-## Honest guardrails
+## A later idea (not started)
 
-- **Synthetic data → method, not truth.** The IBM benchmark has *no ground-truth
-  causal structure*, so every causal number — the ATE (+0.187), the E-value
-  (5.13), the divergence stats — illustrates the *workflow*, not a real effect.
-  The E-value in particular reads as "here is how I would test robustness," not
-  "this effect is robust." Stated plainly because it is a strength (demonstrated
-  rigour), not a weakness to hide.
-- **Observational causal inference, stated honestly.** Identification
-  assumptions are demonstrative and probed with refutation tests; the
-  prediction-vs-causation framing is the contribution, not a claimed effect.
-- **No deployable tool is claimed** — this is a critique of naive deployment,
-  with the machinery to back it. The model card says: *do not use to make
-  individual adverse decisions.*
-
-## v2 (flagged stretch — not started)
-
-Apply the same machinery to the **2026 AI-driven involuntary-attrition wave**
-(Layoffs.fyi + WARN filings + earnings-call AI-capex signals), with a
-bilingual (English + Chinese) East-Asian coverage slice. Honest caveats
-(selection bias, noisy signal extraction, simultaneity of AI-capex and layoffs)
-are baked into that spec. This is a Year-2, faculty-involved extension — see
-[`PROGRESS.md`](PROGRESS.md).
+A separate, much more ambitious *real-data* extension: applying the same machinery to
+the 2026 wave of AI-driven layoffs — using public layoff trackers, WARN-Act filings,
+and AI-investment signals pulled from company earnings calls, with English- and
+Chinese-language coverage of East-Asian firms. This is a large, real-world project
+with its own hard caveats (who gets into the data, how noisy the signals are), and is
+flagged here as a *direction*, not part of the current work.
 
 ## About
 
-Built by **Jimmy Kaian Ji** — KCL Philosophy BA. Applying quantitative methods
-to workforce and commercial-strategy questions, with a research interest in the
-ethics of operationalising judgement into governance metrics.
+Built by **Jimmy Kaian Ji** — KCL Philosophy BA — applying quantitative methods to
+workforce and commercial-strategy questions, with a research interest in the ethics
+of turning human judgement into the metrics institutions then optimise.
 
 Related work:
 [ESG Ratings and Capital Flows](https://github.com/JimmyKJi/esg-retail-flows-causal)
-— a causal-inference study using stacked difference-in-differences and
-instrumental variables.
+— a cause-and-effect study using stacked difference-in-differences and instrumental
+variables.
 
 Contact: [linkedin.com/in/jimmy-kaian-ji](https://www.linkedin.com/in/jimmy-kaian-ji/).
