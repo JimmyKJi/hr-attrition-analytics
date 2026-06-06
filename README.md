@@ -104,7 +104,7 @@ This repo has grown in clearly-labelled stages. Earlier notes confusingly called
   explore the data, run the standard statistical tests, fit a risk model, segment by
   risk, and sketch a retention plan. It's kept intact in
   [`hr-attrition-analysis.ipynb`](hr-attrition-analysis.ipynb). Its headline — a
-  3-lever package "cuts predicted attrition from 16% to 8%" — is exactly the kind of
+  3-lever package "cuts predicted attrition from 16.1% to 7.8%" — is exactly the kind of
   claim v2 then puts under scrutiny.
 - **v2 — the cause-and-effect study (the heart of the project; complete).**
   Everything described above: prediction → cause → the risk-vs-moveable
@@ -134,6 +134,35 @@ averts at least as much attrition, usually more. The gap is starkest on the 15k
 "HR turnover" set — there, leaving is driven by satisfaction, not by the overwork
 lever, so "who's at risk" and "who can we move" barely line up. *(Synthetic data:
 this demonstrates the method's verdict, not a real-world effect.)*
+
+## Under the hood — the method, in brief
+
+*For the technically curious; skip it if you just want the story above. It's here so
+the rigour is visible without reading the code.*
+
+- **Risk model.** A class-balanced **logistic regression** (it beats gradient
+  boosting on this data), checked with 5-fold cross-validation and a **calibration
+  curve** so the scores are usable as genuine probabilities, not just a ranking.
+- **Cause and effect.** An explicit causal graph with **backdoor adjustment**
+  (`DoWhy`) to identify the effect of the action being studied (here, relieving
+  overtime), hardened with three **refutation tests** (a placebo treatment, an
+  injected random cause, a data subset). Per-person effects — the "uplift" — come
+  from a **causal forest** (`EconML`'s `CausalForestDML`), cross-checked against a
+  second estimator.
+- **Robustness.** A formal **sensitivity analysis** (Cinelli–Hazlett robustness
+  value + VanderWeele E-value) that states, in numbers, how strong a hidden factor
+  would have to be to overturn the effect.
+- **The divergence.** The risk and uplift rankings compared with a **rank
+  correlation**, a **top-budget overlap**, and a **wasted-effort** measure.
+- **Fairness.** An automated audit (`fairlearn`) of *who gets flagged*, against the
+  **four-fifths rule**, plus an **efficacy–fairness frontier** that dials the
+  targeting rule from pure-risk to pure-uplift.
+- **Does it travel?** A distribution-shift stress test within the data, then a full
+  re-run of the whole pipeline across **three separate datasets** (v3).
+- **Engineering.** One fixed random seed, a leakage-guarded data loader, a
+  one-command pipeline (`make all`), pinned dependencies (`requirements.lock`), and
+  automated tests on the schema, the split, and the v3 registry — so the numbers
+  reproduce exactly.
 
 ## Honest guardrails
 

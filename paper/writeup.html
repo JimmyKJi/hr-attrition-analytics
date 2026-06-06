@@ -451,10 +451,10 @@ predicts acceptably can still imply a retention plan that does almost nothing.</
 <p><strong>The fairness result replicates and can be severe.</strong> Where demographics exist,
 risk-targeting again falls unevenly. On Employee future it fails the four-fifths
 rule <em>hard</em> on Gender (ratio <strong>0.14</strong> — one gender flagged ~7× more); switching to
-uplift-targeting <strong>repairs it to 0.80</strong> (Gender 0.14→0.80, AgeBand 0.77→0.81 —
-both clear the bar). On IBM the same switch only partly helps and erodes gender
-parity. The targeting rule's distributive consequence is real <em>and
-dataset-specific</em>.</p>
+uplift-targeting <strong>all but erases it</strong> (Gender 0.14→0.80, right at the four-fifths
+line; AgeBand 0.77→0.81, just above it). On IBM the same switch only partly helps
+and erodes gender parity. The targeting rule's distributive consequence is real
+<em>and dataset-specific</em> (per-attribute ratios in <code>figures/v3_fairness.csv</code>).</p>
 <p><strong>Read structurally.</strong> The ATEs here (+0.04, +0.02) are near-inert by design —
 these benchmarks have no real causal effect to recover. What replicates is the
 method's verdict (risk $\neq$ influenceability, and the geometry that makes

@@ -269,6 +269,15 @@ def main() -> None:
     bars = plot_replication(df)
     df.round(4).to_csv(FIGURES / "v3_cross_dataset.csv", index=False)
 
+    # Persist the per-attribute fairness pairs (the headline CSV keeps only the
+    # worst-case ratio); long format so every cited four-fifths number is backed.
+    fair = pd.DataFrame(
+        [{"key": r["key"], "label": r["label"], "attribute": a,
+          "dp_ratio_risk": v["risk"], "dp_ratio_uplift": v["uplift"]}
+         for r in results for a, v in r["fairness"].items()]
+    )
+    fair.round(4).to_csv(FIGURES / "v3_fairness.csv", index=False)
+
     pd.set_option("display.width", 200)
     pd.set_option("display.max_columns", 50)
     print("=== v3 — cross-dataset replication (test sets, 20% budget) ===\n")

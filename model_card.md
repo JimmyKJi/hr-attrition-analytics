@@ -1,7 +1,7 @@
 # Model card — HR attrition models
 
-A living document. Sections marked _(pending Phase N)_ are filled as the build
-reaches them. The model card exists partly to make the **out-of-scope uses**
+A living document; the build is complete (v2, plus the v3 cross-dataset
+replication). The model card exists partly to make the **out-of-scope uses**
 explicit and binding.
 
 ## Model details
@@ -29,7 +29,7 @@ explicit and binding.
 - ❌ Do not treat any number here as an estimate of a real firm's attrition or
   of a real intervention's effect.
 - ❌ Do not deploy across a different labour market without re-validation — see
-  the transportability result (Phase 5b).
+  the transportability result (Phase 5b, confirmed across datasets in v3).
 
 ## Metrics
 
@@ -60,6 +60,13 @@ explicit and binding.
 - **Policy (Phase 4).** At a fixed budget, uplift-targeting beats risk-targeting
   (post-policy 13.2% vs 14.4% at a 10% budget). Full overtime relief is a causal
   16.0%→11.1% — short of v1's naive 7.8% claim.
+- **Cross-dataset replication (v3).** The whole pipeline, re-run through one
+  generic code path on two further independent synthetic turnover datasets,
+  confirms the divergence is structural: risk-targeting efficiency **66 / 20 /
+  50%** (all < 100%); the risk model ports (AUC 0.75–0.82) but the policy does not
+  (averted attrition 4.5 → 0.5–0.6 pp); and where demographics exist,
+  uplift-targeting can repair a four-fifths failure (Employee future Gender
+  0.14→0.80). See `figures/v3_cross_dataset.csv`, `figures/v3_fairness.csv`.
 
 ## Fairness findings
 
@@ -101,4 +108,6 @@ Gender, MaritalStatus, and an Age band — under both targeting rules.
 
 - Synthetic data; observational, demonstrative identification assumptions probed
   with refutation tests (not a claimed real-world effect).
-- Single dataset, single (implicit US-corporate) labour context.
+- The *model* is fit on a single dataset and a single (implicit US-corporate)
+  labour context. The *finding* (risk ≠ influenceability) is replicated across
+  three datasets in v3, but no multi-market or production model is claimed.

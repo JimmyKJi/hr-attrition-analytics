@@ -1,0 +1,6 @@
+key,label,attribute,dp_ratio_risk,dp_ratio_uplift
+ibm,IBM HR (v2 reference),Gender,0.8902,0.7141
+ibm,IBM HR (v2 reference),MaritalStatus,0.2083,0.5927
+ibm,IBM HR (v2 reference),AgeBand,0.267,0.4747
+employee_future,Employee future (4.7k),Gender,0.1426,0.7999
+employee_future,Employee future (4.7k),AgeBand,0.7715,0.8065

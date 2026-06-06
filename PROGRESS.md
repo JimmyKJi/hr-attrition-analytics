@@ -1,7 +1,8 @@
 # Progress
 
-Living status for the v2 build (prediction → causation → ethics). Updated at
-each phase's Definition of Done (DoD). Computed numbers land in §Results.
+Living status for the build — **v2** (prediction → causation → ethics) and the
+**v3** cross-dataset replication. Updated at each phase's Definition of Done (DoD);
+computed numbers land in §Results and the v3 section.
 
 Legend: ✅ done · 🔄 in progress · ⬜ not started
 
@@ -71,7 +72,7 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started
   `transportability.csv`).
 - **Writeup + reproduce (Phase 6):** `paper/writeup.md` carries the full arc
   (prediction → why it misleads → causal uplift → divergence → policy →
-  ethics/fairness → transportability → conclusion → flagged v2). **`make all`
+  ethics/fairness → transportability → conclusion → a later-idea note). **`make all`
   reproduces the whole pipeline end-to-end (verified, exit 0)**; the only run-to-
   run movement is last-ULP float noise in the forest and Monte-Carlo jitter in
   the DoWhy refuters — every reported figure is stable to the digits cited. Four
@@ -159,11 +160,12 @@ Consistency check: on IBM the generic path reproduces v2 exactly — Spearman
 - **The fairness result replicates and can be severe.** Where demographics exist,
   risk-targeting again falls unevenly: on Employee future it fails four-fifths
   **hard on Gender (0.14)** — flagging one gender ~7× more — while on IBM it fails
-  on marital status (0.21) and age (0.27). Switching to uplift-targeting **repairs
-  Employee future to 0.80** (Gender 0.14→0.80, AgeBand 0.77→0.81: both clear the
-  bar), but on IBM it only partly helps and erodes gender parity. The targeting
-  rule's distributive consequence is real *and dataset-specific* — not a neutral
-  default.
+  on marital status (0.21) and age (0.27). Switching to uplift-targeting **nearly
+  erases the Employee-future gap** (Gender 0.14→0.80, right at the four-fifths line;
+  AgeBand 0.77→0.81, just above it), but on IBM it only partly helps and erodes
+  gender parity. The targeting rule's distributive consequence is real *and
+  dataset-specific* — not a neutral default (per-attribute ratios in
+  `figures/v3_fairness.csv`).
 - **Synthetic data, so read structurally.** The ATEs here (+0.04, +0.02) are
   near-inert by design: these benchmarks have no real causal effect to recover.
   What replicates is the *method's verdict* — risk ≠ influenceability, and the
@@ -173,7 +175,8 @@ Consistency check: on IBM the generic path reproduces v2 exactly — Spearman
 `make v3` runs it end-to-end (≈ 25 s; downloads the two extra datasets to the
 gitignored `data/raw/`). 12 light schema tests in `tests/test_v3.py` guard the
 registry and the generic loader. Figures `v3_divergence_grid.png`,
-`v3_replication.png`; table `figures/v3_cross_dataset.csv`.
+`v3_replication.png`; tables `figures/v3_cross_dataset.csv` and
+`figures/v3_fairness.csv` (per-attribute four-fifths ratios).
 
 ## Environment notes
 
