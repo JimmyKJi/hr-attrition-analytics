@@ -47,6 +47,7 @@ distributive-justice judgement**, not a neutral technical default.
 | Who gets flagged for intervention? | 5 | Risk-targeting fails the four-fifths rule on marital status (ratio **0.21**) and age (**0.27**). Uplift-targeting halves both but introduces a mild gender gap (0.89→0.71). |
 | Can you have efficacy *and* fairness? | 5+ | Risk→uplift is a **Pareto improvement** on the worst group (+1.5 pp averted *and* worst-case four-fifths 0.21→0.47), but **no rule clears four-fifths** (best 0.47) and Gender parity erodes. The rule is a distributive dial. |
 | Validated where? | 5b | The risk **ranking** ports (ROC-AUC 0.76–0.84); the **policy** does not (averts 5.8 pp where hours are long vs 1.6 pp where they aren't). |
+| Does it replicate on *other* datasets? | v3 | **Yes.** Across two more turnover datasets the divergence recurs (risk-targeting efficiency **66 / 20 / 50%**); efficiency tracks $\rho(\text{risk},\tau)$, not lever strength; the risk model ports (AUC 0.75–0.82) but the policy does not; where demographics exist, uplift-targeting can repair a four-fifths failure (Gender **0.14→0.80**). |
 
 ---
 
@@ -297,7 +298,60 @@ implicit US-corporate frame — is deliberately understated; the general claim i
 market-neutral: *a model validated in one labour market is not thereby validated
 for another.*
 
-## 8. Honest guardrails
+## 8. Cross-dataset replication (v3)
+
+The results so far come from one synthetic dataset. The honest question is whether
+the central finding — risk ranking $\neq$ uplift ranking — is a property of the
+*method* or an artifact of the IBM fixture. v3 answers it by re-running the entire
+pipeline (risk model → causal-forest uplift → divergence → 20%-budget policy →
+fairness audit) through a single generic code path ([`src/v3/`](../src/v3/)) on
+two further independent, synthetic turnover datasets, with IBM kept in as a
+reference. As a built-in consistency check the generic path reproduces the
+Phase-3 IBM divergence to the last digit ($\rho = 0.5347695578$).
+
+![Risk ≠ influenceability across datasets](../figures/v3_divergence_grid.png)
+
+| Dataset | $n$ | base | lever (exposed) | risk AUC | ATE | $\rho(r,\tau)$ | top-20% overlap | risk-targeting efficiency |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| IBM HR (reference) | 368 | 16.0% | overtime (25%) | 0.814 | +0.185 | +0.53 | 58% | **66%** |
+| HR turnover (15k) | 3,750 | 23.8% | overwork ≥250 h/mo (22%) | 0.819 | +0.042 | +0.18 | 23% | **20%** |
+| Employee future (4.7k) | 1,164 | 34.4% | ever benched (10%) | 0.750 | +0.018 | +0.29 | 26% | **50%** |
+
+**The divergence replicates.** In all three, $\rho(r,\tau)$ sits well below 1, the
+top-20% lists overlap only modestly, and a risk-targeted policy captures *less*
+than 100% of the retention the uplift-optimal list would. Ranking by risk is not
+ranking by influenceability anywhere — the v2 result is structural, not an IBM
+artifact.
+
+**The magnitude tracks risk–uplift alignment, not lever strength.** Efficiency
+follows $\rho(r,\tau)$ monotonically (0.53→66%, 0.29→50%, 0.18→20%) rather than
+the ATE. The HR-turnover set is the extreme: leaving there is driven
+overwhelmingly by satisfaction, which has little to do with who is overworked, so
+the two rankings go nearly orthogonal and risk-targeting wastes four-fifths of the
+achievable retention.
+
+![Does the result replicate?](../figures/v3_replication.png)
+
+**The risk *model* transports; the *policy* does not.** Risk AUC is comparably
+high everywhere (0.75–0.82), but the lever's averted attrition collapses from
+4.5 pp (IBM) to 0.5–0.6 pp (the others). This is the Phase-5b within-dataset
+finding, now confirmed *across genuinely different datasets*: a model that
+predicts acceptably can still imply a retention plan that does almost nothing.
+
+**The fairness result replicates and can be severe.** Where demographics exist,
+risk-targeting again falls unevenly. On Employee future it fails the four-fifths
+rule *hard* on Gender (ratio **0.14** — one gender flagged ~7× more); switching to
+uplift-targeting **repairs it to 0.80** (Gender 0.14→0.80, AgeBand 0.77→0.81 —
+both clear the bar). On IBM the same switch only partly helps and erodes gender
+parity. The targeting rule's distributive consequence is real *and
+dataset-specific*.
+
+**Read structurally.** The ATEs here (+0.04, +0.02) are near-inert by design —
+these benchmarks have no real causal effect to recover. What replicates is the
+method's verdict (risk $\neq$ influenceability, and the geometry that makes
+risk-targeting waste retention), not any real overtime / overwork / bench effect.
+
+## 9. Honest guardrails
 
 - **Synthetic data → method, not truth.** Every causal number is illustrative of
   the method, not an estimate of a real workforce. Stated plainly because it is a
@@ -309,22 +363,25 @@ for another.*
 - **No deployable tool is claimed.** The claim is a *critique of naive
   deployment*, with the machinery to back it.
 
-## 9. Conclusion
+## 10. Conclusion
 
-On a single synthetic dataset, the risk ranking and the uplift ranking diverge
-(top-decile overlap 27%); a policy that targets the influenceable beats one that
-targets the risky and exposes v1's headline reduction as an artifact of
-re-scoring a predictive model; the choice between those rules has real, uneven
-fairness consequences; and even a portable *ranking* implies a policy that does
-not survive a change of labour market. The unifying claim is normative and
+On the IBM dataset the risk ranking and the uplift ranking diverge (top-decile
+overlap 27%) — and v3 shows that divergence recurs on two further datasets, so it
+is a property of the method, not of one fixture; a policy that targets the
+influenceable beats one that targets the risky and exposes v1's headline reduction
+as an artifact of re-scoring a predictive model; the choice between those rules has
+real, uneven, dataset-specific fairness consequences; and even a portable
+*ranking* implies a policy that does not survive a change of labour market —
+within one dataset and across several. The unifying claim is normative and
 operational at once: **the predictive score is the wrong operational target, and
 the decision to act on any score is a governance choice, not a model output.**
 
-## 10. v2 — flagged stretch (not started)
+## 11. A later idea (not started)
 
-The same machinery applied to the **2026 AI-driven involuntary-attrition wave**:
-firm-quarter panel from Layoffs.fyi + WARN filings + earnings-call AI-capex
-signals, with a bilingual (English + Chinese) East-Asian coverage slice.
+A separate, more ambitious *real-data* direction: the same machinery applied to
+the **2026 AI-driven involuntary-attrition wave** — a firm-quarter panel from
+Layoffs.fyi + WARN filings + earnings-call AI-capex signals, with a bilingual
+(English + Chinese) East-Asian coverage slice.
 Hypothesis: AI-capex intensity at $t$ predicts involuntary attrition at
 $t{+}1/2$. Honest caveats are baked into the spec — Layoffs.fyi is
 event-only/selection-biased (non-layoff firm-quarters must be constructed),
@@ -342,7 +399,8 @@ cd hr-attrition-analytics
 python -m venv .venv && source .venv/bin/activate
 make setup          # install dependencies
 make data           # fetch IBM HR dataset into data/raw/ (gitignored)
-make all            # predict → causal → policy → ethics → transport
+make all            # predict → causal → policy → ethics → transport (v2)
+make v3             # cross-dataset replication (downloads 2 extra datasets)
 make test           # schema + pipeline tests
 ```
 

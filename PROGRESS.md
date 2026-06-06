@@ -124,13 +124,65 @@ each ships like a phase (branch → commit → main).
   distributive-justice dial, not a neutral default (`src/ethics/fairness_frontier.py`,
   `figures/fairness_frontier.png`, `figures/fairness_frontier.csv`).
 
+## v3 — cross-dataset replication (✅ complete)
+
+Does the v2 result (risk ranking ≠ uplift ranking) hold on *other* workforces, or
+is it a quirk of the IBM fixture? The v2 pipeline is re-run through one generic
+code path (`src/v3/`) on two independent **synthetic** turnover datasets, with IBM
+included as a reference. Same 20% budget throughout for comparability.
+Consistency check: on IBM the generic path reproduces v2 exactly — Spearman
+ρ(risk, τ) = 0.5347695578 to the last digit of `figures/divergence_stats.csv`.
+
+| Dataset | n (test) | base | lever (exposed) | risk AUC | ATE | ρ(risk,τ) | top-20% overlap | risk-targeting efficiency | averted risk → uplift |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| IBM HR (reference) | 368 | 16.0% | overtime (25%) | 0.814 | +0.185 | +0.53 | 58% | **66%** | 2.9 → 4.5 pp |
+| HR turnover (15k) | 3,750 | 23.8% | overwork ≥250 h/mo (22%) | 0.819 | +0.042 | +0.18 | 23% | **20%** | 0.1 → 0.6 pp |
+| Employee future (4.7k) | 1,164 | 34.4% | ever benched (10%) | 0.750 | +0.018 | +0.29 | 26% | **50%** | 0.3 → 0.5 pp |
+
+- **The divergence replicates.** In all three, ρ(risk, τ) sits well below 1, the
+  top-20% lists only modestly overlap, and risk-targeting captures **< 100%** of
+  the retention the uplift-optimal list would (66 / 20 / 50%). Ranking by risk is
+  not ranking by influenceability anywhere — the v2 result is **structural**, not
+  an IBM artefact (`figures/v3_divergence_grid.png`).
+- **The magnitude tracks risk–uplift alignment.** Efficiency follows ρ(risk, τ)
+  monotonically (0.53→66%, 0.29→50%, 0.18→20%), *not* the lever's average
+  strength. HR turnover is the extreme: leaving there is driven overwhelmingly by
+  satisfaction, which has little to do with who is overworked, so the two rankings
+  go nearly orthogonal and risk-targeting wastes **four-fifths** of achievable
+  retention (`figures/v3_replication.png`, Panel A).
+- **The risk *model* transports; the *policy* does not.** Risk AUC is comparably
+  high everywhere (0.75–0.82), but the lever's averted attrition collapses from
+  **4.5 pp** (IBM) to **0.5–0.6 pp** (the others) — Phase 5b's within-dataset
+  finding, now confirmed *across genuinely different datasets*. A model that
+  predicts well somewhere can still imply a retention plan that does almost
+  nothing there.
+- **The fairness result replicates and can be severe.** Where demographics exist,
+  risk-targeting again falls unevenly: on Employee future it fails four-fifths
+  **hard on Gender (0.14)** — flagging one gender ~7× more — while on IBM it fails
+  on marital status (0.21) and age (0.27). Switching to uplift-targeting **repairs
+  Employee future to 0.80** (Gender 0.14→0.80, AgeBand 0.77→0.81: both clear the
+  bar), but on IBM it only partly helps and erodes gender parity. The targeting
+  rule's distributive consequence is real *and dataset-specific* — not a neutral
+  default.
+- **Synthetic data, so read structurally.** The ATEs here (+0.04, +0.02) are
+  near-inert by design: these benchmarks have no real causal effect to recover.
+  What replicates is the *method's verdict* — risk ≠ influenceability, and the
+  geometry that makes risk-targeting waste retention — not any real overtime /
+  overwork / bench effect.
+
+`make v3` runs it end-to-end (≈ 25 s; downloads the two extra datasets to the
+gitignored `data/raw/`). 12 light schema tests in `tests/test_v3.py` guard the
+registry and the generic loader. Figures `v3_divergence_grid.png`,
+`v3_replication.png`; table `figures/v3_cross_dataset.csv`.
+
 ## Environment notes
 
 - Python 3.12 (Anaconda). Auth: HTTPS via osxkeychain (push verified).
 - `econml`/`shap` constrain `numpy<2` and an older `scikit-learn` — see
   `requirements.txt`. Exact versions frozen in `requirements.lock` after install.
 
-## v2 (flagged stretch, not started)
+## Later idea (not started)
 
 2026 AI-layoff-wave extension (Layoffs.fyi + WARN + earnings-call AI-capex,
-bilingual East-Asian slice). Year-2, faculty-involved. Spec in README.
+bilingual East-Asian slice) — a separate real-data direction, flagged in the
+README, not part of the current work.

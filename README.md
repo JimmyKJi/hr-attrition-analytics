@@ -69,7 +69,8 @@ the two rankings, and what it does to the retention plan and to fairness.
 | **Does targeting the moveable actually do better?** | **Yes.** At the same budget, the smarter list leaves measurably fewer people quitting (**11.6% vs 13.1%**). |
 | **Is it fair to act on the risk score?** | **Not automatically.** The "act on the highest-risk" rule flags some groups far more than others — it fails a standard fairness threshold on marital status and age. |
 | **Can you be both effective *and* fairer?** | **Partly.** Shifting toward the "moveable" list helps the worst-off group *and* averts more attrition — but no single rule clears the fairness bar on every attribute. So it's a deliberate choice, not a neutral default. |
-| **Does any of this transfer to another workforce?** | The risk *ranking* travels reasonably well; the retention *plan* does **not**. A model that predicts well somewhere can still recommend a plan that does nothing there. (**v3**, below, pushes this test across whole *datasets*.) |
+| **Does any of this transfer to another workforce?** | The risk *ranking* travels reasonably well; the retention *plan* does **not**. A model that predicts well somewhere can still recommend a plan that does nothing there. (**v3** confirms this across whole *datasets* — see below.) |
+| **Does the whole finding repeat on *other* datasets?** | **Yes — that's v3.** Re-running everything on two more turnover datasets, the risk-vs-moveable gap shows up every single time, so it's a property of the *method*, not a quirk of the IBM data. The gap is **widest** where leaving is driven by something other than the lever you can pull — and there, switching to the moveable list also *repairs* a serious fairness gap. |
 
 *Exact statistics — confidence checks, the divergence measures, the robustness
 values, the fairness ratios — are in [`PROGRESS.md`](PROGRESS.md) and the writeup.*
@@ -110,11 +111,29 @@ This repo has grown in clearly-labelled stages. Earlier notes confusingly called
   disagreement → a causally-grounded retention plan → a fairness audit → a transfer
   test. Built as a clean, tested, reproducible Python pipeline rather than a single
   notebook.
-- **v3 — does it hold up on *other* datasets? (in progress).** v2's findings come
-  from one synthetic dataset. v3 re-runs the same analysis on additional
-  employee-turnover datasets and asks the honest question: do the results repeat —
-  and where they *don't*, **why**? (Different workforces, different real drivers,
-  different quirks in how each dataset was built.)
+- **v3 — does it hold up on *other* datasets? (complete).** v2's findings come
+  from one synthetic dataset, so the fair question is whether they're real or just
+  a quirk of that data. v3 re-runs the *same* analysis on two more
+  employee-turnover datasets (plus the original as a reference) and answers it:
+  **the result repeats.** Ranking people by risk diverges from ranking them by
+  *moveability* every time — it's a property of the method, not of the IBM data.
+  The *size* of the gap differs, and v3 explains why: it's widest where leaving is
+  driven by something other than the lever you're pulling. Two bonus findings: the
+  prediction model travels across datasets but the retention *plan* doesn't, and —
+  where the data has demographics — switching to the moveable list can also repair
+  a serious fairness gap.
+
+### v3 at a glance
+
+![What v3 found](figures/v3_replication.png)
+
+Left: in every dataset, spending your budget on the highest-**risk** people
+captures only *part* of the retention you'd get by spending it on the most
+**moveable** (the dashed line is the best you could do). Right: the moveable list
+averts at least as much attrition, usually more. The gap is starkest on the 15k
+"HR turnover" set — there, leaving is driven by satisfaction, not by the overwork
+lever, so "who's at risk" and "who can we move" barely line up. *(Synthetic data:
+this demonstrates the method's verdict, not a real-world effect.)*
 
 ## Honest guardrails
 
@@ -150,6 +169,7 @@ hr-attrition-analytics/
 │   ├── causal/                # cause, influenceability, the divergence (Phase 3)
 │   ├── policy/                # the causally-grounded retention plan (Phase 4)
 │   ├── ethics/                # fairness audit + transfer test (Phase 5)
+│   ├── v3/                    # cross-dataset replication (v3): registry + generic pipeline
 │   └── viz/                   # shared chart helpers
 ├── tests/                     # automated checks on the data + pipeline
 ├── notebooks/                 # short, readable review notebooks (01–04)
@@ -166,7 +186,8 @@ cd hr-attrition-analytics
 python -m venv .venv && source .venv/bin/activate
 make setup                 # install the software it needs
 make data                  # download the dataset into data/raw/ (not committed to git)
-make all                   # run the whole pipeline: predict → cause → plan → fairness → transfer
+make all                   # run the whole v2 pipeline: predict → cause → plan → fairness → transfer
+make v3                    # cross-dataset replication: re-run the analysis on 2 more datasets
 make test                  # run the automated checks
 make notebooks             # rebuild and run the review notebooks
 make paper-html            # rebuild the shareable HTML writeup

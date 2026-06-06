@@ -166,6 +166,12 @@ frame. The general claim is market-neutral: *a model validated in one labour
 market is not thereby validated for another* — a validity-and-fairness problem
 for any cross-border employer.
 
+**v3 confirms this across whole datasets, not just reweighted versions of one.**
+Re-running the pipeline on two further turnover datasets, the risk *model* ports
+(AUC 0.75–0.82 everywhere) but the lever's averted attrition collapses from
+4.5 pp on IBM to 0.5–0.6 pp elsewhere — the policy does not travel even when the
+prediction does (`src/v3/`).
+
 ## 7. Honest guardrails
 
 - **The v1 data is the IBM HR Analytics benchmark, which is synthetic.** Every
@@ -191,7 +197,9 @@ for any cross-border employer.
 - **No deployable tool is claimed.** The claim is a *critique of naive
   deployment*, with the machinery to back it.
 
-The intended arc: v1 is a methodological demonstration on a public benchmark;
-the flagged v2 stretch (see README) applies the same machinery to the 2026
-AI-driven involuntary-attrition wave, where the same prediction-vs-causation
-and transportability problems recur on real, topical data.
+The intended arc: v1 is a methodological demonstration on a public benchmark; v2
+builds the prediction-vs-causation and ethics study on it; v3 shows those findings
+replicate across independent datasets. A separate, later real-data stretch (see
+README) would apply the same machinery to the 2026 AI-driven involuntary-attrition
+wave, where the same prediction-vs-causation and transportability problems would
+recur on real, topical data.

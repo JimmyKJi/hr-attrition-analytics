@@ -1,4 +1,4 @@
-.PHONY: help setup lock data predict causal policy ethics transport paper paper-html notebooks test all clean
+.PHONY: help setup lock data predict causal policy ethics transport v3 paper paper-html notebooks test all clean
 
 PY ?= python
 
@@ -34,6 +34,9 @@ ethics:  ## Phase 5 — fairness / disparate-impact audit + efficacy-fairness fr
 
 transport:  ## Phase 5b — transportability / distribution-shift stress test
 	$(PY) -m src.ethics.transportability
+
+v3:  ## v3 — cross-dataset replication (downloads 2 extra turnover datasets to data/raw/)
+	$(PY) -m src.v3.replicate
 
 paper:  ## Pointer to the writeup
 	@echo "Writeup: paper/writeup.md"
